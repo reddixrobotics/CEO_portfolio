@@ -92,7 +92,7 @@ export const DEFAULT_SITE_CONTENT: SiteContent = {
       role: "Founder & CEO",
       organization: "Reddix Robotics",
       period: "2023 — Present",
-      location: "Bengaluru, IN",
+      location: "Hyderabad, IN",
       summary:
         "Architecting autonomous mobile robot platforms, sensor fusion algorithms, and low-latency cloud fleet management software.",
       achievements: [

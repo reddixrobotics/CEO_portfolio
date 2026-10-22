@@ -127,7 +127,7 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
   return (
     <section
       id="contact"
-      className="relative min-h-screen lg:h-screen lg:max-h-screen w-full overflow-hidden bg-[#020406] text-white selection:bg-cyan-500 selection:text-black flex flex-col justify-center pt-20 pb-6 lg:pt-20 lg:pb-6 scroll-mt-0"
+      className="relative min-h-screen lg:h-screen lg:max-h-screen w-full overflow-hidden bg-[#020406] text-white selection:bg-cyan-500 selection:text-black flex flex-col justify-center pt-16 pb-3 lg:pt-16 lg:pb-3 scroll-mt-0"
     >
       {/* ─── Ambient Sci-Fi Background Elements ─── */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" style={{ contain: "paint" }}>
@@ -220,18 +220,18 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
 
       {/* ─── Main Content Container (Two-Column Layout) ─── */}
       <div className="relative z-20 mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 xl:px-16 w-full my-auto">
-        <div className="grid grid-cols-1 items-start md:items-center gap-6 md:grid-cols-12 md:gap-6 xl:gap-10 w-full">
+        <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-12 md:gap-6 xl:gap-10 w-full">
           {/* ════════ LEFT COLUMN: CONTACT INTRODUCTION ════════ */}
           <div className="flex flex-col justify-center md:col-span-5 xl:col-span-5 relative z-20 w-full min-w-0 max-w-lg md:max-w-none">
             {/* Small cyan label */}
             <div className="inline-flex items-center gap-2">
-              <span className="font-mono text-xs font-bold tracking-[0.25em] text-[#00D9FF]">
+              <span className="font-mono text-[10px] sm:text-xs font-bold tracking-[0.25em] text-[#00D9FF]">
                 // DIRECT CHANNEL // FOUNDER &amp; CEO
               </span>
             </div>
 
             {/* Large Bold Heading */}
-            <h1 className="mt-2 text-2xl sm:text-3xl lg:text-4xl xl:text-[42px] font-black uppercase tracking-tight text-white leading-[1.12] break-words">
+            <h1 className="mt-1.5 text-xl sm:text-2xl lg:text-3xl xl:text-[34px] font-black uppercase tracking-tight text-white leading-[1.12] break-words">
               LET’S BUILD <br />
               <span
                 className="text-[#00D9FF]"
@@ -245,134 +245,124 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
             </h1>
 
             {/* Short Description */}
-            <p className="mt-2 max-w-full text-xs sm:text-sm leading-relaxed text-[#94A3B8] break-words">
+            <p className="mt-1.5 max-w-full text-xs sm:text-[13px] leading-relaxed text-[#94A3B8] break-words">
               Direct executive channel to the Founder &amp; CEO of Reddix Robotics. Let’s discuss autonomous systems, partnerships, or engineering collaborations.
             </p>
 
             {/* Vertically Stacked Contact Details */}
-            <div className="mt-4 sm:mt-5 space-y-2.5 sm:space-y-3">
+            <div className="mt-3.5 sm:mt-4 space-y-2 sm:space-y-2.5">
               {/* 1. EMAIL */}
-              <div className="group flex items-center gap-3 sm:gap-3.5 transition-transform duration-300 hover:translate-x-1">
-                <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full border border-cyan-400/40 bg-black/80 text-[#00D9FF] shadow-[0_0_15px_rgba(0,217,255,0.18)] transition-all duration-300 group-hover:border-cyan-300 group-hover:shadow-[0_0_22px_rgba(0,217,255,0.4)]">
-                  <Mail className="h-4 w-4" />
+              <div className="group flex items-center gap-2.5 sm:gap-3 transition-transform duration-300 hover:translate-x-1">
+                <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-full border border-cyan-400/40 bg-black/80 text-[#00D9FF] shadow-[0_0_15px_rgba(0,217,255,0.18)] transition-all duration-300 group-hover:border-cyan-300 group-hover:shadow-[0_0_22px_rgba(0,217,255,0.4)]">
+                  <Mail className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] text-[#00D9FF]">
+                  <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#00D9FF]">
                     EMAIL (CEO DIRECT)
                   </span>
                   <a
                     href="mailto:reddixrobotics@gmail.com"
-                    className="text-xs sm:text-sm font-semibold text-white transition-colors hover:text-[#00D9FF] break-all sm:break-normal"
+                    className="text-xs sm:text-[13px] font-semibold text-white transition-colors hover:text-[#00D9FF] break-all sm:break-normal"
                   >
                     reddixrobotics@gmail.com
                   </a>
-                  <span className="text-[9px] sm:text-[10px] font-medium text-cyan-400/70">
-                    Official Executive Inbox
-                  </span>
                 </div>
               </div>
 
-              {/* 2. PHONE */}
-              <div className="group flex items-center gap-3 sm:gap-3.5 transition-transform duration-300 hover:translate-x-1">
-                <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full border border-cyan-400/40 bg-black/80 text-[#00D9FF] shadow-[0_0_15px_rgba(0,217,255,0.18)] transition-all duration-300 group-hover:border-cyan-300 group-hover:shadow-[0_0_22px_rgba(0,217,255,0.4)]">
-                  <Phone className="h-4 w-4" />
+              {/* 2. PHONE (NO WORKING HOURS) */}
+              <div className="group flex items-center gap-2.5 sm:gap-3 transition-transform duration-300 hover:translate-x-1">
+                <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-full border border-cyan-400/40 bg-black/80 text-[#00D9FF] shadow-[0_0_15px_rgba(0,217,255,0.18)] transition-all duration-300 group-hover:border-cyan-300 group-hover:shadow-[0_0_22px_rgba(0,217,255,0.4)]">
+                  <Phone className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] text-[#00D9FF]">
+                  <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#00D9FF]">
                     PHONE (CEO DIRECT)
                   </span>
                   <a
                     href="tel:+917036780248"
-                    className="text-xs sm:text-sm font-semibold text-white transition-colors hover:text-[#00D9FF]"
+                    className="text-xs sm:text-[13px] font-semibold text-white transition-colors hover:text-[#00D9FF]"
                   >
                     +91 70367 80248
                   </a>
-                  <span className="text-[9px] sm:text-[10px] font-medium text-cyan-400/70">
-                    Mon - Sat, 9 AM - 7 PM (IST)
-                  </span>
                 </div>
               </div>
 
-              {/* 3. LOCATION */}
-              <div className="group flex items-center gap-3 sm:gap-3.5 transition-transform duration-300 hover:translate-x-1">
-                <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full border border-cyan-400/40 bg-black/80 text-[#00D9FF] shadow-[0_0_15px_rgba(0,217,255,0.18)] transition-all duration-300 group-hover:border-cyan-300 group-hover:shadow-[0_0_22px_rgba(0,217,255,0.4)]">
-                  <MapPin className="h-4 w-4" />
+              {/* 3. LOCATION (HYDERABAD ONLY) */}
+              <div className="group flex items-center gap-2.5 sm:gap-3 transition-transform duration-300 hover:translate-x-1">
+                <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-full border border-cyan-400/40 bg-black/80 text-[#00D9FF] shadow-[0_0_15px_rgba(0,217,255,0.18)] transition-all duration-300 group-hover:border-cyan-300 group-hover:shadow-[0_0_22px_rgba(0,217,255,0.4)]">
+                  <MapPin className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] text-[#00D9FF]">
-                    REDDIX ROBOTICS HQ
+                  <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#00D9FF]">
+                    LOCATION
                   </span>
-                  <span className="text-xs sm:text-sm font-semibold text-white">Bengaluru &amp; Hyderabad, India</span>
-                  <span className="text-[9px] sm:text-[10px] font-medium text-cyan-400/70">
-                    Robotics R&amp;D Lab &amp; Prototyping Facility
-                  </span>
+                  <span className="text-xs sm:text-[13px] font-semibold text-white">Hyderabad, India</span>
                 </div>
               </div>
 
               {/* 4. LINKEDIN */}
-              <div className="group flex items-center gap-3 sm:gap-3.5 transition-transform duration-300 hover:translate-x-1">
-                <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full border border-cyan-400/40 bg-black/80 text-[#00D9FF] shadow-[0_0_15px_rgba(0,217,255,0.18)] transition-all duration-300 group-hover:border-cyan-300 group-hover:shadow-[0_0_22px_rgba(0,217,255,0.4)]">
-                  <LinkedinIcon className="h-4 w-4" />
+              <div className="group flex items-center gap-2.5 sm:gap-3 transition-transform duration-300 hover:translate-x-1">
+                <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-full border border-cyan-400/40 bg-black/80 text-[#00D9FF] shadow-[0_0_15px_rgba(0,217,255,0.18)] transition-all duration-300 group-hover:border-cyan-300 group-hover:shadow-[0_0_22px_rgba(0,217,255,0.4)]">
+                  <LinkedinIcon className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] text-[#00D9FF]">
+                  <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#00D9FF]">
                     LINKEDIN
                   </span>
                   <a
                     href="https://www.linkedin.com/in/reddixrobotics"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs sm:text-sm font-semibold text-white transition-colors hover:text-[#00D9FF] break-all sm:break-normal"
+                    className="text-xs sm:text-[13px] font-semibold text-white transition-colors hover:text-[#00D9FF] break-all sm:break-normal"
                   >
                     linkedin.com/in/reddixrobotics
                   </a>
-                  <span className="text-[9px] sm:text-[10px] font-medium text-cyan-400/70">Let’s connect!</span>
                 </div>
               </div>
             </div>
 
             {/* Social Icons Row */}
-            <div className="mt-4 sm:mt-5 flex items-center gap-3">
+            <div className="mt-3.5 sm:mt-4 flex items-center gap-2.5">
               <a
                 href="https://www.linkedin.com/in/reddixrobotics"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="LinkedIn Profile"
-                className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-cyan-500/30 bg-black/80 text-zinc-300 transition-all duration-300 hover:border-cyan-400 hover:text-[#00D9FF] hover:shadow-[0_0_15px_rgba(0,217,255,0.3)]"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-cyan-500/30 bg-black/80 text-zinc-300 transition-all duration-300 hover:border-cyan-400 hover:text-[#00D9FF] hover:shadow-[0_0_15px_rgba(0,217,255,0.3)]"
               >
-                <LinkedinIcon className="h-4 w-4" />
+                <LinkedinIcon className="h-3.5 w-3.5" />
               </a>
               <a
                 href="https://www.instagram.com/reddixrobotics?igsi=NW43ZWR3eTZnY2J1&utm_source=qr"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Instagram Profile"
-                className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-pink-500/30 bg-black/80 text-zinc-300 transition-all duration-300 hover:border-pink-400 hover:text-pink-400 hover:shadow-[0_0_15px_rgba(244,63,94,0.3)]"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-pink-500/30 bg-black/80 text-zinc-300 transition-all duration-300 hover:border-pink-400 hover:text-pink-400 hover:shadow-[0_0_15px_rgba(244,63,94,0.3)]"
               >
-                <InstagramIcon className="h-4 w-4" />
+                <InstagramIcon className="h-3.5 w-3.5" />
               </a>
               <a
                 href="https://www.youtube.com/@reddix_robotics"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="YouTube Channel"
-                className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-red-500/30 bg-black/80 text-zinc-300 transition-all duration-300 hover:border-red-400 hover:text-red-400 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-red-500/30 bg-black/80 text-zinc-300 transition-all duration-300 hover:border-red-400 hover:text-red-400 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]"
               >
-                <YoutubeIcon className="h-4 w-4" />
+                <YoutubeIcon className="h-3.5 w-3.5" />
               </a>
               <a
                 href="https://github.com"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="GitHub Profile"
-                className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-cyan-500/30 bg-black/80 text-zinc-300 transition-all duration-300 hover:border-cyan-400 hover:text-[#00D9FF] hover:shadow-[0_0_15px_rgba(0,217,255,0.3)]"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-cyan-500/30 bg-black/80 text-zinc-300 transition-all duration-300 hover:border-cyan-400 hover:text-[#00D9FF] hover:shadow-[0_0_15px_rgba(0,217,255,0.3)]"
               >
-                <GithubIcon className="h-4 w-4" />
+                <GithubIcon className="h-3.5 w-3.5" />
               </a>
             </div>
 
             {/* Subtle Tagline */}
-            <div className="mt-6 flex items-center gap-2">
+            <div className="mt-2.5 sm:mt-3 flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00e5ff]" />
               <span className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-zinc-500">
                 INNOVATION THROUGH ROBOTICS &amp; AI
@@ -407,27 +397,33 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
             <div className="relative w-full max-w-[540px] xl:max-w-[580px]">
               {/* Outer Glowing Cyber Chamfered Border Box */}
               <div
-                className="relative overflow-hidden rounded-2xl border border-cyan-400/45 bg-[#030812]/90 p-4 sm:p-7 md:p-8 backdrop-blur-xl max-w-full"
+                className="relative overflow-hidden rounded-xl border border-cyan-400/40 bg-[#030812]/95 p-3 sm:p-4 lg:p-4 backdrop-blur-xl max-w-full"
                 style={{
                   boxShadow:
                     "0 0 35px rgba(0, 217, 255, 0.16), inset 0 0 25px rgba(0, 217, 255, 0.05)",
                   clipPath:
-                    "polygon(0 18px, 18px 0, calc(100% - 24px) 0, 100% 24px, 100% calc(100% - 18px), calc(100% - 18px) 100%, 18px 100%, 0 calc(100% - 18px))",
+                    "polygon(0 14px, 14px 0, calc(100% - 18px) 0, 100% 18px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px))",
                 }}
               >
                 {/* High-Tech HUD Corner & Edge Accent Markings */}
-                <div className="pointer-events-none absolute left-0 top-0 h-4 w-4 border-l-2 border-t-2 border-[#00D9FF]" />
-                <div className="pointer-events-none absolute right-0 top-0 h-4 w-4 border-r-2 border-t-2 border-[#00D9FF]" />
-                <div className="pointer-events-none absolute bottom-0 left-0 h-4 w-4 border-b-2 border-l-2 border-[#00D9FF]" />
-                <div className="pointer-events-none absolute bottom-0 right-0 h-4 w-4 border-b-2 border-r-2 border-[#00D9FF]" />
+                <div className="pointer-events-none absolute left-0 top-0 h-3.5 w-3.5 border-l-2 border-t-2 border-[#00D9FF]" />
+                <div className="pointer-events-none absolute right-0 top-0 h-3.5 w-3.5 border-r-2 border-t-2 border-[#00D9FF]" />
+                <div className="pointer-events-none absolute bottom-0 left-0 h-3.5 w-3.5 border-b-2 border-l-2 border-[#00D9FF]" />
+                <div className="pointer-events-none absolute bottom-0 right-0 h-3.5 w-3.5 border-b-2 border-r-2 border-[#00D9FF]" />
 
                 {/* Form Header */}
                 <div className="relative">
-                  <span className="font-mono text-[11px] font-bold tracking-[0.25em] text-[#00D9FF]">
-                    // DIRECT TRANSMISSION TO CEO
-                  </span>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[10px] font-bold tracking-[0.25em] text-[#00D9FF]">
+                      // DIRECT TRANSMISSION TO CEO
+                    </span>
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00D9FF]" />
+                    </span>
+                  </div>
 
-                  <h2 className="mt-1 text-xl sm:text-2xl font-black uppercase tracking-tight text-white">
+                  <h2 className="mt-0.5 text-lg sm:text-xl font-black uppercase tracking-tight text-white">
                     GET IN{" "}
                     <span
                       className="text-[#00D9FF]"
@@ -439,33 +435,33 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
                     </span>
                   </h2>
 
-                  <p className="mt-0.5 text-xs text-[#94A3B8]">
-                    Send a message directly to the CEO. Executive inquiries &amp; collaborations welcome.
+                  <p className="mt-0.5 text-[11px] text-[#94A3B8]">
+                    Send a direct message to the CEO. Executive inquiries &amp; collaborations welcome.
                   </p>
                 </div>
 
                 {/* Submission Success Alert */}
                 {submitted && (
-                  <div className="mt-3 rounded-lg border border-cyan-400/60 bg-cyan-950/40 p-3.5 backdrop-blur-sm animate-in fade-in">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle2 className="h-5 w-5 shrink-0 text-[#00D9FF]" />
+                  <div className="mt-2.5 rounded-lg border border-cyan-400/60 bg-cyan-950/40 p-3 backdrop-blur-sm animate-in fade-in">
+                    <div className="flex items-start gap-2.5">
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-[#00D9FF]" />
                       <div className="flex-1">
-                        <p className="text-sm font-bold text-white">Transmission Prepared</p>
-                        <p className="mt-1 text-xs text-cyan-200">
+                        <p className="text-xs font-bold text-white">Transmission Prepared</p>
+                        <p className="mt-0.5 text-[11px] text-cyan-200">
                           Your message has been formatted for{" "}
                           <span className="font-mono text-[#00D9FF]">
                             reddixrobotics@gmail.com
                           </span>
                           . Opening your mail client...
                         </p>
-                        <div className="mt-2.5 flex items-center gap-3">
+                        <div className="mt-2 flex items-center gap-3">
                           <a
                             href={`mailto:reddixrobotics@gmail.com?subject=${encodeURIComponent(
                               form.subject
                             )}&body=${encodeURIComponent(
                               `From: ${form.name} (${form.email})\n\n${form.message}`
                             )}`}
-                            className="inline-flex items-center gap-1.5 rounded bg-[#00D9FF] px-3 py-1.5 text-xs font-bold text-black transition-transform hover:scale-105"
+                            className="inline-flex items-center gap-1 rounded bg-[#00D9FF] px-2.5 py-1 text-[11px] font-bold text-black transition-transform hover:scale-105"
                           >
                             Open Mail Client <ExternalLink className="h-3 w-3" />
                           </a>
@@ -473,7 +469,7 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
                             type="button"
                             suppressHydrationWarning
                             onClick={() => setSubmitted(false)}
-                            className="text-xs text-zinc-400 hover:text-white underline"
+                            className="text-[11px] text-zinc-400 hover:text-white underline"
                           >
                             Send Another
                           </button>
@@ -484,17 +480,17 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
                 )}
 
                 {/* Contact Form */}
-                <form onSubmit={handleSubmit} noValidate suppressHydrationWarning className="mt-3 space-y-2.5 sm:space-y-3">
+                <form onSubmit={handleSubmit} noValidate suppressHydrationWarning className="mt-2 space-y-2">
                   {/* Name and Email side by side */}
-                  <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {/* Name Field */}
                     <div>
-                      <label className="block font-mono text-[11px] font-semibold tracking-wider text-zinc-300">
+                      <label className="block font-mono text-[10px] font-semibold tracking-wider text-zinc-300">
                         Name <span className="text-[#00D9FF]">*</span>
                       </label>
-                      <div className="relative mt-1">
-                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-cyan-400/70">
-                          <User className="h-4 w-4" />
+                      <div className="relative mt-0.5">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-cyan-400/70">
+                          <User className="h-3.5 w-3.5" />
                         </div>
                         <input
                           type="text"
@@ -506,7 +502,7 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
                             if (errors.name) setErrors({ ...errors, name: undefined });
                           }}
                           placeholder="Your full name"
-                          className={`w-full rounded-lg border bg-[#050D18]/90 py-2.5 pl-10 pr-3.5 text-sm text-white placeholder-zinc-500 transition-all duration-200 focus:outline-none ${
+                          className={`w-full rounded-lg border bg-[#050D18]/90 py-1.5 pl-8 pr-2.5 text-xs text-white placeholder-zinc-500 transition-all duration-200 focus:outline-none ${
                             errors.name
                               ? "border-red-500/80 focus:border-red-400 focus:ring-1 focus:ring-red-400"
                               : "border-cyan-500/30 hover:border-cyan-500/50 focus:border-[#00D9FF] focus:ring-1 focus:ring-[#00D9FF] focus:shadow-[0_0_15px_rgba(0,217,255,0.25)]"
@@ -514,20 +510,20 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
                         />
                       </div>
                       {errors.name && (
-                        <p className="mt-1 text-[11px] text-red-400 flex items-center gap-1">
-                          <AlertCircle className="h-3 w-3" /> {errors.name}
+                        <p className="mt-0.5 text-[10px] text-red-400 flex items-center gap-1">
+                          <AlertCircle className="h-2.5 w-2.5" /> {errors.name}
                         </p>
                       )}
                     </div>
 
                     {/* Email Field */}
                     <div>
-                      <label className="block font-mono text-[11px] font-semibold tracking-wider text-zinc-300">
+                      <label className="block font-mono text-[10px] font-semibold tracking-wider text-zinc-300">
                         Email <span className="text-[#00D9FF]">*</span>
                       </label>
-                      <div className="relative mt-1">
-                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-cyan-400/70">
-                          <Mail className="h-4 w-4" />
+                      <div className="relative mt-0.5">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-cyan-400/70">
+                          <Mail className="h-3.5 w-3.5" />
                         </div>
                         <input
                           type="email"
@@ -539,7 +535,7 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
                             if (errors.email) setErrors({ ...errors, email: undefined });
                           }}
                           placeholder="your@email.com"
-                          className={`w-full rounded-lg border bg-[#050D18]/90 py-2.5 pl-10 pr-3.5 text-sm text-white placeholder-zinc-500 transition-all duration-200 focus:outline-none ${
+                          className={`w-full rounded-lg border bg-[#050D18]/90 py-1.5 pl-8 pr-2.5 text-xs text-white placeholder-zinc-500 transition-all duration-200 focus:outline-none ${
                             errors.email
                               ? "border-red-500/80 focus:border-red-400 focus:ring-1 focus:ring-red-400"
                               : "border-cyan-500/30 hover:border-cyan-500/50 focus:border-[#00D9FF] focus:ring-1 focus:ring-[#00D9FF] focus:shadow-[0_0_15px_rgba(0,217,255,0.25)]"
@@ -547,8 +543,8 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
                         />
                       </div>
                       {errors.email && (
-                        <p className="mt-1 text-[11px] text-red-400 flex items-center gap-1">
-                          <AlertCircle className="h-3 w-3" /> {errors.email}
+                        <p className="mt-0.5 text-[10px] text-red-400 flex items-center gap-1">
+                          <AlertCircle className="h-2.5 w-2.5" /> {errors.email}
                         </p>
                       )}
                     </div>
@@ -556,12 +552,12 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
 
                   {/* Subject Field (Full Width) */}
                   <div>
-                    <label className="block font-mono text-[11px] font-semibold tracking-wider text-zinc-300">
+                    <label className="block font-mono text-[10px] font-semibold tracking-wider text-zinc-300">
                       Subject <span className="text-[#00D9FF]">*</span>
                     </label>
-                    <div className="relative mt-1">
-                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-cyan-400/70">
-                        <FileText className="h-4 w-4" />
+                    <div className="relative mt-0.5">
+                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5 text-cyan-400/70">
+                        <FileText className="h-3.5 w-3.5" />
                       </div>
                       <input
                         type="text"
@@ -573,7 +569,7 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
                           if (errors.subject) setErrors({ ...errors, subject: undefined });
                         }}
                         placeholder="What is this regarding?"
-                        className={`w-full rounded-lg border bg-[#050D18]/90 py-2.5 pl-10 pr-3.5 text-sm text-white placeholder-zinc-500 transition-all duration-200 focus:outline-none ${
+                        className={`w-full rounded-lg border bg-[#050D18]/90 py-1.5 pl-8 pr-2.5 text-xs text-white placeholder-zinc-500 transition-all duration-200 focus:outline-none ${
                           errors.subject
                             ? "border-red-500/80 focus:border-red-400 focus:ring-1 focus:ring-red-400"
                             : "border-cyan-500/30 hover:border-cyan-500/50 focus:border-[#00D9FF] focus:ring-1 focus:ring-[#00D9FF] focus:shadow-[0_0_15px_rgba(0,217,255,0.25)]"
@@ -581,32 +577,32 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
                       />
                     </div>
                     {errors.subject && (
-                      <p className="mt-1 text-[11px] text-red-400 flex items-center gap-1">
-                        <AlertCircle className="h-3 w-3" /> {errors.subject}
+                      <p className="mt-0.5 text-[10px] text-red-400 flex items-center gap-1">
+                        <AlertCircle className="h-2.5 w-2.5" /> {errors.subject}
                       </p>
                     )}
                   </div>
 
                   {/* Message Field (Full Width Textarea) */}
                   <div>
-                    <label className="block font-mono text-[11px] font-semibold tracking-wider text-zinc-300">
+                    <label className="block font-mono text-[10px] font-semibold tracking-wider text-zinc-300">
                       Message <span className="text-[#00D9FF]">*</span>
                     </label>
-                    <div className="relative mt-1">
-                      <div className="pointer-events-none absolute top-3 left-0 flex items-start pl-3.5 text-cyan-400/70">
-                        <MessageSquare className="h-4 w-4" />
+                    <div className="relative mt-0.5">
+                      <div className="pointer-events-none absolute top-2 left-0 flex items-start pl-2.5 text-cyan-400/70">
+                        <MessageSquare className="h-3.5 w-3.5" />
                       </div>
                       <textarea
                         required
                         suppressHydrationWarning
-                        rows={3}
+                        rows={2}
                         value={form.message}
                         onChange={(e) => {
                           setForm({ ...form, message: e.target.value });
                           if (errors.message) setErrors({ ...errors, message: undefined });
                         }}
                         placeholder="Your message to the CEO..."
-                        className={`w-full rounded-lg border bg-[#050D18]/90 py-2 pl-10 pr-3.5 text-xs sm:text-sm text-white placeholder-zinc-500 transition-all duration-200 focus:outline-none resize-none ${
+                        className={`w-full rounded-lg border bg-[#050D18]/90 py-1.5 pl-8 pr-2.5 text-xs text-white placeholder-zinc-500 transition-all duration-200 focus:outline-none resize-none ${
                           errors.message
                             ? "border-red-500/80 focus:border-red-400 focus:ring-1 focus:ring-red-400"
                             : "border-cyan-500/30 hover:border-cyan-500/50 focus:border-[#00D9FF] focus:ring-1 focus:ring-[#00D9FF] focus:shadow-[0_0_15px_rgba(0,217,255,0.25)]"
@@ -614,8 +610,8 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
                       />
                     </div>
                     {errors.message && (
-                      <p className="mt-1 text-[11px] text-red-400 flex items-center gap-1">
-                        <AlertCircle className="h-3 w-3" /> {errors.message}
+                      <p className="mt-0.5 text-[10px] text-red-400 flex items-center gap-1">
+                        <AlertCircle className="h-2.5 w-2.5" /> {errors.message}
                       </p>
                     )}
                   </div>
@@ -626,33 +622,22 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
                       type="submit"
                       suppressHydrationWarning
                       disabled={submitting}
-                      className="group relative flex w-full items-center justify-center gap-2 rounded-xl bg-[#00D9FF] py-2.5 sm:py-3 px-5 font-mono text-xs sm:text-[13px] font-black uppercase tracking-[0.2em] text-black transition-all duration-300 hover:bg-[#38E1FF] hover:shadow-[0_0_30px_rgba(0,217,255,0.55)] active:scale-[0.99] disabled:opacity-70 cursor-pointer"
+                      className="group relative flex w-full items-center justify-center gap-2 rounded-lg bg-[#00D9FF] py-2 sm:py-2.5 px-4 font-mono text-xs font-black uppercase tracking-[0.18em] text-black transition-all duration-300 hover:bg-[#38E1FF] hover:shadow-[0_0_25px_rgba(0,217,255,0.55)] active:scale-[0.99] disabled:opacity-70 cursor-pointer"
                     >
                       {submitting ? (
                         <>
-                          <span className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent" />
+                          <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-black border-t-transparent" />
                           <span>TRANSMITTING...</span>
                         </>
                       ) : (
                         <>
                           <span>SEND MESSAGE TO CEO</span>
-                          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                          <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                         </>
                       )}
                     </button>
                   </div>
                 </form>
-              </div>
-
-              {/* Status Indicator Below the Panel */}
-              <div className="mt-3.5 flex items-center justify-center gap-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00D9FF]" />
-                </span>
-                <span className="font-mono text-xs text-zinc-400">
-                  Always open to new ideas
-                </span>
               </div>
             </div>
           </div>

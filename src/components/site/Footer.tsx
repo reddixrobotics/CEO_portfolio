@@ -66,7 +66,7 @@ export default function Footer() {
             Autonomous Mobile Robotics &amp; Embedded Systems
           </p>
           <span className="font-mono text-[10px] text-zinc-600 mt-0.5 tracking-wider uppercase">
-            ESTD 2025 • BENGALURU, INDIA
+            ESTD 2025 • HYDERABAD, INDIA
           </span>
         </div>
 
