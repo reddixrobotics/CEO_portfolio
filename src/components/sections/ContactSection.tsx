@@ -88,6 +88,13 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [lastSubmitted, setLastSubmitted] = useState<{
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+  } | null>(null);
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
@@ -104,24 +111,36 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     setSubmitting(true);
+    setSubmitError("");
 
-    setTimeout(() => {
-      setSubmitting(false);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to transmit message");
+      }
+
+      setLastSubmitted({ ...form });
       setSubmitted(true);
-
-      const mailtoLink = `mailto:reddixrobotics@gmail.com?subject=${encodeURIComponent(
-        form.subject
-      )}&body=${encodeURIComponent(
-        `From: ${form.name} (${form.email})\n\n${form.message}`
-      )}`;
-
-      window.location.href = mailtoLink;
-    }, 700);
+      setForm({ name: "", email: "", subject: "", message: "" });
+    } catch (err: any) {
+      console.error("[Contact Form Submit Error]", err);
+      setSubmitError(
+        err?.message || "Transmission could not be dispatched. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -446,36 +465,46 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
                     <div className="flex items-start gap-2.5">
                       <CheckCircle2 className="h-4 w-4 shrink-0 text-[#00D9FF]" />
                       <div className="flex-1">
-                        <p className="text-xs font-bold text-white">Transmission Prepared</p>
+                        <p className="text-xs font-bold text-white">Transmission Delivered &amp; Logged</p>
                         <p className="mt-0.5 text-[11px] text-cyan-200">
-                          Your message has been formatted for{" "}
-                          <span className="font-mono text-[#00D9FF]">
+                          Your message has been sent to{" "}
+                          <span className="font-mono font-bold text-[#00D9FF]">
                             reddixrobotics@gmail.com
-                          </span>
-                          . Opening your mail client...
+                          </span>{" "}
+                          and logged in the Founder &amp; CEO Admin Portal.
                         </p>
                         <div className="mt-2 flex items-center gap-3">
-                          <a
-                            href={`mailto:reddixrobotics@gmail.com?subject=${encodeURIComponent(
-                              form.subject
-                            )}&body=${encodeURIComponent(
-                              `From: ${form.name} (${form.email})\n\n${form.message}`
-                            )}`}
-                            className="inline-flex items-center gap-1 rounded bg-[#00D9FF] px-2.5 py-1 text-[11px] font-bold text-black transition-transform hover:scale-105"
-                          >
-                            Open Mail Client <ExternalLink className="h-3 w-3" />
-                          </a>
+                          {lastSubmitted && (
+                            <a
+                              href={`mailto:reddixrobotics@gmail.com?subject=${encodeURIComponent(
+                                lastSubmitted.subject
+                              )}&body=${encodeURIComponent(
+                                `From: ${lastSubmitted.name} (${lastSubmitted.email})\n\n${lastSubmitted.message}`
+                              )}`}
+                              className="inline-flex items-center gap-1 rounded bg-[#00D9FF] px-2.5 py-1 text-[11px] font-bold text-black transition-transform hover:scale-105"
+                            >
+                              Direct Mail Thread <ExternalLink className="h-3 w-3" />
+                            </a>
+                          )}
                           <button
                             type="button"
                             suppressHydrationWarning
                             onClick={() => setSubmitted(false)}
-                            className="text-[11px] text-zinc-400 hover:text-white underline"
+                            className="text-[11px] text-zinc-400 hover:text-white underline cursor-pointer"
                           >
                             Send Another
                           </button>
                         </div>
                       </div>
                     </div>
+                  </div>
+                )}
+
+                {/* Submission Error Alert */}
+                {submitError && (
+                  <div className="mt-2 rounded-lg border border-red-500/50 bg-red-950/40 p-2.5 text-xs text-red-300 flex items-center gap-2">
+                    <AlertCircle className="h-3.5 w-3.5 shrink-0 text-red-400" />
+                    <span>{submitError}</span>
                   </div>
                 )}
 

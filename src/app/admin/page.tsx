@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { SiteContent, ProjectItem, AchievementItem } from "@/lib/content/types";
+import { ContactMessage } from "@/lib/messages/messageService";
 import {
   Save,
   CheckCircle2,
@@ -23,6 +24,11 @@ import {
   ChevronDown,
   X,
   AlertTriangle,
+  Mail,
+  Search,
+  Inbox,
+  Clock,
+  Send,
 } from "lucide-react";
 
 export default function AdminPage() {
@@ -42,10 +48,18 @@ export default function AdminPage() {
 
   // Content states
   const [content, setContent] = useState<SiteContent | null>(null);
-  const [activeTab, setActiveTab] = useState<"projects" | "achievements" | "hero" | "about" | "career">("projects");
+  const [activeTab, setActiveTab] = useState<
+    "projects" | "achievements" | "messages" | "hero" | "about" | "career"
+  >("projects");
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Inquiries / Contact Messages states
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [messagesLoading, setMessagesLoading] = useState(false);
+  const [messagesError, setMessagesError] = useState("");
+  const [messageSearch, setMessageSearch] = useState("");
 
   // Modals & form states
   const [isAddingProject, setIsAddingProject] = useState(false);
@@ -88,6 +102,7 @@ export default function AdminPage() {
         if (data.authenticated) {
           setIsAuthenticated(true);
           loadContent();
+          loadMessages();
         }
       })
       .catch((err) => console.error("Auth check failed", err))
@@ -99,6 +114,56 @@ export default function AdminPage() {
       .then((res) => res.json())
       .then((data) => setContent(data))
       .catch((err) => console.error("Content load failed", err));
+  };
+
+  const loadMessages = async () => {
+    setMessagesLoading(true);
+    setMessagesError("");
+    try {
+      const res = await fetch(`/api/contact?t=${Date.now()}`, { cache: "no-store" });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.messages)) {
+        setMessages(data.messages);
+      }
+    } catch (err: any) {
+      console.error("Messages load failed", err);
+      setMessagesError(err?.message || "Could not fetch contact inquiries");
+    } finally {
+      setMessagesLoading(false);
+    }
+  };
+
+  const handleToggleMessageRead = async (id: string, currentRead: boolean) => {
+    try {
+      const res = await fetch("/api/contact", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, read: !currentRead }),
+      });
+      if (res.ok) {
+        setMessages((prev) =>
+          prev.map((m) => (m.id === id ? { ...m, read: !currentRead } : m))
+        );
+      }
+    } catch (err) {
+      console.error("Toggle read failed", err);
+    }
+  };
+
+  const handleDeleteMessage = async (id: string) => {
+    if (!window.confirm("Are you sure you want to permanently delete this contact inquiry?")) return;
+    try {
+      const res = await fetch("/api/contact", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        setMessages((prev) => prev.filter((m) => m.id !== id));
+      }
+    } catch (err) {
+      console.error("Delete message failed", err);
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -120,6 +185,7 @@ export default function AdminPage() {
       if (res.ok && data.success) {
         setIsAuthenticated(true);
         loadContent();
+        loadMessages();
       } else {
         setLoginError(data.error || "Authentication failed. Invalid email or password.");
       }
@@ -581,6 +647,13 @@ export default function AdminPage() {
         {[
           { id: "projects", label: "Projects", icon: Briefcase, count: content.projects.length },
           { id: "achievements", label: "Achievements", icon: Award, count: content.achievements.length },
+          {
+            id: "messages",
+            label: "Inquiries",
+            icon: Mail,
+            count: messages.length,
+            unread: messages.filter((m) => !m.read).length,
+          },
           { id: "hero", label: "Hero & HUD", icon: Layers },
           { id: "about", label: "About & Bio", icon: User },
           { id: "career", label: "Startup Journey", icon: Layers },
@@ -591,7 +664,7 @@ export default function AdminPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`flex items-center gap-2 whitespace-nowrap px-4 py-3 font-mono text-xs uppercase tracking-wider border-b-2 transition-all ${
+              className={`flex items-center gap-2 whitespace-nowrap px-4 py-3 font-mono text-xs uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
                 isActive
                   ? "border-cyan-400 text-cyan-300 font-bold shadow-[0_2px_12px_rgba(0,229,255,0.2)]"
                   : "border-transparent text-zinc-400 hover:text-white"
@@ -599,11 +672,15 @@ export default function AdminPage() {
             >
               <Icon className="h-4 w-4" />
               <span>{tab.label}</span>
-              {tab.count !== undefined && (
+              {tab.unread !== undefined && tab.unread > 0 ? (
+                <span className="rounded-full bg-cyan-400 text-black px-1.5 py-0.5 text-[10px] font-black animate-pulse shadow-[0_0_8px_#00e5ff]">
+                  {tab.unread} NEW
+                </span>
+              ) : tab.count !== undefined ? (
                 <span className="rounded-full bg-zinc-800 px-1.5 py-0.5 text-[10px] text-cyan-300 font-bold">
                   {tab.count}
                 </span>
-              )}
+              ) : null}
             </button>
           );
         })}
@@ -1346,6 +1423,201 @@ export default function AdminPage() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════
+          INQUIRIES / CONTACT MESSAGES TAB
+      ═══════════════════════════════════════════════ */}
+      {activeTab === "messages" && (
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 sm:p-8 space-y-6">
+          {/* Header Row */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-zinc-800 pb-4">
+            <div>
+              <div className="inline-flex items-center gap-2">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-[#00D9FF]">
+                  // EXECUTIVE CHANNEL // INCOMING TRANSMISSIONS
+                </span>
+              </div>
+              <h3 className="mt-1 font-mono text-base sm:text-lg font-black uppercase tracking-wider text-white">
+                Contact Messages &amp; Inquiries
+              </h3>
+              <p className="mt-0.5 text-xs text-zinc-400">
+                Messages submitted via the Contact form dispatched to{" "}
+                <span className="text-cyan-300 font-mono">reddixrobotics@gmail.com</span> and preserved in database.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={loadMessages}
+                disabled={messagesLoading}
+                className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-950/20 px-3.5 py-2 text-xs font-mono font-bold text-cyan-300 hover:bg-cyan-900/30 transition-all cursor-pointer disabled:opacity-50"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${messagesLoading ? "animate-spin" : ""}`} />
+                <span>{messagesLoading ? "Refreshing..." : "Refresh Inbox"}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Search & Filter Bar */}
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500">
+              <Search className="h-4 w-4" />
+            </div>
+            <input
+              type="text"
+              value={messageSearch}
+              onChange={(e) => setMessageSearch(e.target.value)}
+              placeholder="Search by sender name, email, subject, or message keyword..."
+              className="w-full rounded-xl border border-zinc-800 bg-zinc-950/80 py-2.5 pl-9 pr-4 text-xs text-white placeholder-zinc-500 focus:border-cyan-400 focus:outline-none"
+            />
+          </div>
+
+          {/* Messages List */}
+          {messagesLoading && messages.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <RefreshCw className="h-8 w-8 text-cyan-400 animate-spin mb-3" />
+              <p className="text-xs font-mono uppercase tracking-widest text-zinc-400">
+                Retrieving Transmissions...
+              </p>
+            </div>
+          ) : messages.filter((m) => {
+              if (!messageSearch.trim()) return true;
+              const q = messageSearch.toLowerCase();
+              return (
+                m.name.toLowerCase().includes(q) ||
+                m.email.toLowerCase().includes(q) ||
+                m.subject.toLowerCase().includes(q) ||
+                m.message.toLowerCase().includes(q)
+              );
+            }).length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center rounded-xl border border-dashed border-zinc-800 bg-zinc-950/50 p-8">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full border border-cyan-500/30 bg-cyan-950/20 text-[#00D9FF] mb-3">
+                <Inbox className="h-6 w-6" />
+              </div>
+              <h4 className="font-mono text-sm font-bold uppercase tracking-wider text-white">
+                {messageSearch ? "No matching inquiries found" : "No Incoming Transmissions Yet"}
+              </h4>
+              <p className="mt-1 max-w-md text-xs text-zinc-500 leading-relaxed">
+                {messageSearch
+                  ? "Try clearing your search query to see all received contact messages."
+                  : "When partners, clients, or engineers fill out the contact form, their messages will appear here and deliver straight to reddixrobotics@gmail.com."}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {messages
+                .filter((m) => {
+                  if (!messageSearch.trim()) return true;
+                  const q = messageSearch.toLowerCase();
+                  return (
+                    m.name.toLowerCase().includes(q) ||
+                    m.email.toLowerCase().includes(q) ||
+                    m.subject.toLowerCase().includes(q) ||
+                    m.message.toLowerCase().includes(q)
+                  );
+                })
+                .map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`rounded-xl border transition-all duration-200 p-5 ${
+                      msg.read
+                        ? "border-zinc-800/80 bg-zinc-950/60"
+                        : "border-cyan-500/50 bg-[#030d1c]/90 shadow-[0_0_20px_rgba(0,217,255,0.08)]"
+                    }`}
+                  >
+                    {/* Message Top Row */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-800/60 pb-3">
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <span className="font-mono text-sm font-bold text-white">
+                          {msg.name}
+                        </span>
+                        <a
+                          href={`mailto:${msg.email}?subject=Re:%20${encodeURIComponent(msg.subject)}`}
+                          className="text-xs text-cyan-300 hover:underline flex items-center gap-1 font-mono"
+                        >
+                          <Mail className="h-3 w-3" />
+                          {msg.email}
+                        </a>
+                        {!msg.read ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-cyan-400 px-2 py-0.5 text-[9px] font-black text-black uppercase tracking-wider shadow-[0_0_8px_#00e5ff]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-black animate-ping" />
+                            NEW
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center rounded-full border border-zinc-700 bg-zinc-800 px-2 py-0.5 text-[9px] font-mono text-zinc-400 uppercase tracking-wider">
+                            READ
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2 text-[11px] font-mono text-zinc-400">
+                        <Clock className="h-3 w-3 text-zinc-500" />
+                        <span>{new Date(msg.createdAt).toLocaleString()}</span>
+                      </div>
+                    </div>
+
+                    {/* Subject */}
+                    <div className="mt-3">
+                      <span className="text-xs font-mono uppercase tracking-wider text-zinc-400">Subject: </span>
+                      <span className="text-sm font-bold text-white">{msg.subject}</span>
+                    </div>
+
+                    {/* Body Text */}
+                    <div className="mt-2.5 rounded-lg border border-zinc-800/80 bg-black/60 p-3.5 text-xs sm:text-[13px] leading-relaxed text-zinc-200 whitespace-pre-wrap font-sans">
+                      {msg.message}
+                    </div>
+
+                    {/* Message Bottom Action Row */}
+                    <div className="mt-4 flex flex-wrap items-center justify-between gap-3 pt-2">
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex items-center gap-1 rounded border border-emerald-500/30 bg-emerald-950/20 px-2 py-0.5 text-[10px] font-mono text-emerald-400">
+                          <CheckCircle2 className="h-2.5 w-2.5" /> Database Logged
+                        </span>
+                        {msg.emailSent ? (
+                          <span className="inline-flex items-center gap-1 rounded border border-cyan-500/30 bg-cyan-950/20 px-2 py-0.5 text-[10px] font-mono text-cyan-300">
+                            <Send className="h-2.5 w-2.5" /> Email Dispatched
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded border border-zinc-700 bg-zinc-800 px-2 py-0.5 text-[10px] font-mono text-zinc-400">
+                            Direct Portal Delivery
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={`mailto:${msg.email}?subject=Re:%20${encodeURIComponent(msg.subject)}`}
+                          className="inline-flex items-center gap-1 rounded-lg bg-cyan-400 hover:bg-cyan-300 px-3 py-1.5 text-xs font-mono font-bold text-black transition-all"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          Reply
+                        </a>
+
+                        <button
+                          type="button"
+                          onClick={() => handleToggleMessageRead(msg.id, msg.read)}
+                          className="inline-flex items-center gap-1 rounded-lg border border-zinc-700 hover:border-zinc-500 bg-zinc-800/80 px-3 py-1.5 text-xs font-mono text-zinc-300 hover:text-white transition-all cursor-pointer"
+                        >
+                          {msg.read ? "Mark Unread" : "Mark as Read"}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteMessage(msg.id)}
+                          className="inline-flex items-center gap-1 rounded-lg border border-red-500/30 hover:border-red-500 bg-red-950/20 px-2.5 py-1.5 text-xs font-mono text-red-400 hover:bg-red-950/40 transition-all cursor-pointer"
+                          title="Delete Inquiry"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
         </div>
       )}
     </div>
