@@ -55,6 +55,14 @@ function InstagramIcon({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
+function YoutubeIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+    </svg>
+  );
+}
+
 interface FormState {
   name: string;
   email: string;
@@ -312,12 +320,12 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
                     LINKEDIN
                   </span>
                   <a
-                    href="https://linkedin.com/in/dhupam-saisatwika"
+                    href="https://www.linkedin.com/in/reddixrobotics"
                     target="_blank"
                     rel="noreferrer"
                     className="text-xs sm:text-sm font-semibold text-white transition-colors hover:text-[#00D9FF] break-all sm:break-normal"
                   >
-                    linkedin.com/in/dhupam-saisatwika
+                    linkedin.com/in/reddixrobotics
                   </a>
                   <span className="text-[10px] sm:text-[11px] font-medium text-cyan-400/70">Let’s connect!</span>
                 </div>
@@ -327,16 +335,7 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
             {/* Social Icons Row */}
             <div className="mt-6 sm:mt-7 flex items-center gap-3">
               <a
-                href="https://github.com"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="GitHub Profile"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-cyan-500/30 bg-black/80 text-zinc-300 transition-all duration-300 hover:border-cyan-400 hover:text-[#00D9FF] hover:shadow-[0_0_15px_rgba(0,217,255,0.3)]"
-              >
-                <GithubIcon className="h-4 w-4" />
-              </a>
-              <a
-                href="https://linkedin.com/in/dhupam-saisatwika"
+                href="https://www.linkedin.com/in/reddixrobotics"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="LinkedIn Profile"
@@ -345,22 +344,31 @@ export default function ContactSection({ standalone = true }: { standalone?: boo
                 <LinkedinIcon className="h-4 w-4" />
               </a>
               <a
-                href="https://x.com"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="X Profile"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-cyan-500/30 bg-black/80 text-zinc-300 transition-all duration-300 hover:border-cyan-400 hover:text-[#00D9FF] hover:shadow-[0_0_15px_rgba(0,217,255,0.3)]"
-              >
-                <XTwitterIcon className="h-3.5 w-3.5" />
-              </a>
-              <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/reddixrobotics?igsi=NW43ZWR3eTZnY2J1&utm_source=qr"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Instagram Profile"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-cyan-500/30 bg-black/80 text-zinc-300 transition-all duration-300 hover:border-cyan-400 hover:text-[#00D9FF] hover:shadow-[0_0_15px_rgba(0,217,255,0.3)]"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-pink-500/30 bg-black/80 text-zinc-300 transition-all duration-300 hover:border-pink-400 hover:text-pink-400 hover:shadow-[0_0_15px_rgba(244,63,94,0.3)]"
               >
                 <InstagramIcon className="h-4 w-4" />
+              </a>
+              <a
+                href="https://www.youtube.com/@reddix_robotics"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="YouTube Channel"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-red-500/30 bg-black/80 text-zinc-300 transition-all duration-300 hover:border-red-400 hover:text-red-400 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]"
+              >
+                <YoutubeIcon className="h-4 w-4" />
+              </a>
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="GitHub Profile"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-cyan-500/30 bg-black/80 text-zinc-300 transition-all duration-300 hover:border-cyan-400 hover:text-[#00D9FF] hover:shadow-[0_0_15px_rgba(0,217,255,0.3)]"
+              >
+                <GithubIcon className="h-4 w-4" />
               </a>
             </div>
 
