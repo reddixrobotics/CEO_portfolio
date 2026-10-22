@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { AchievementItem } from "@/lib/content/types";
-import { Trophy } from "lucide-react";
+import { Trophy, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface AchievementsSectionProps {
   achievements?: AchievementItem[];
@@ -13,6 +13,13 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  // Mouse drag-to-scroll state
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
 
   // Fallback items if array is empty
   const items: AchievementItem[] =
@@ -57,9 +64,9 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
           },
         ];
 
-  // Number of dots:
-  // If > 3 items, provide dots corresponding to pages/cards (capped to 3-4 dots as in screenshot)
-  const totalDots = items.length > 3 ? Math.min(items.length - 2, 4) : 1;
+  // Exactly 3 horizontal line indicators as shown in the reference image
+  const TOTAL_INDICATOR_SEGMENTS = 3;
+  const hasHorizontalScroll = items.length > 3;
 
   // Intersection observer for entrance animation
   useEffect(() => {
@@ -85,28 +92,81 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
     return () => observer.disconnect();
   }, []);
 
-  // Update active dot on scroll
-  const handleScroll = () => {
+  // Update scroll indicators & active dash index
+  const updateScrollState = useCallback(() => {
     if (!scrollRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
     const maxScroll = scrollWidth - clientWidth;
-    if (maxScroll <= 0) return;
+
+    setCanScrollLeft(scrollLeft > 10);
+    setCanScrollRight(scrollLeft < maxScroll - 10);
+
+    if (maxScroll <= 0) {
+      setActiveIndex(0);
+      return;
+    }
 
     const progress = scrollLeft / maxScroll;
-    const newIdx = Math.round(progress * (totalDots - 1));
-    setActiveIndex(Math.min(Math.max(newIdx, 0), totalDots - 1));
-  };
+    const segment = Math.min(
+      TOTAL_INDICATOR_SEGMENTS - 1,
+      Math.max(0, Math.round(progress * (TOTAL_INDICATOR_SEGMENTS - 1)))
+    );
+    setActiveIndex(segment);
+  }, []);
 
-  const scrollToDot = (dotIdx: number) => {
+  useEffect(() => {
+    updateScrollState();
+    const handleResize = () => updateScrollState();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [updateScrollState]);
+
+  // Click on a specific line indicator segment (0 = start, 1 = middle, 2 = end)
+  const scrollToSegment = (segmentIdx: number) => {
     if (!scrollRef.current) return;
     const { scrollWidth, clientWidth } = scrollRef.current;
     const maxScroll = scrollWidth - clientWidth;
-    const targetScroll = (dotIdx / (totalDots - 1)) * maxScroll;
+    if (maxScroll <= 0) return;
+
+    const targetLeft = (segmentIdx / (TOTAL_INDICATOR_SEGMENTS - 1)) * maxScroll;
     scrollRef.current.scrollTo({
-      left: targetScroll,
+      left: targetLeft,
       behavior: "smooth",
     });
-    setActiveIndex(dotIdx);
+    setActiveIndex(segmentIdx);
+  };
+
+  // Scroll by 1 card width
+  const scrollByDirection = (direction: "left" | "right") => {
+    if (!scrollRef.current) return;
+    const cardElement = scrollRef.current.querySelector<HTMLElement>(".achievement-card");
+    const cardWidth = cardElement ? cardElement.offsetWidth + 24 : 360;
+    const scrollDelta = direction === "right" ? cardWidth : -cardWidth;
+
+    scrollRef.current.scrollBy({
+      left: scrollDelta,
+      behavior: "smooth",
+    });
+  };
+
+  // Mouse Drag to Scroll handlers
+  const onMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    isDraggingRef.current = true;
+    startXRef.current = e.pageX - scrollRef.current.offsetLeft;
+    scrollLeftRef.current = scrollRef.current.scrollLeft;
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDraggingRef.current || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startXRef.current) * 1.5; // Drag speed multiplier
+    scrollRef.current.scrollLeft = scrollLeftRef.current - walk;
+  };
+
+  const onMouseUp = () => {
+    isDraggingRef.current = false;
   };
 
   return (
@@ -163,20 +223,26 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
           </div>
         </div>
 
-        {/* ─── Cards Grid / Horizontal Scroll Snap Container ─── */}
+        {/* ─── Cards Horizontal Scroll Container ─── */}
+        {/* On desktop (md & lg), displays exactly 3 cards side-by-side with horizontal scroll for card 4+ */}
         <div
           ref={scrollRef}
-          onScroll={handleScroll}
-          className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto md:overflow-x-visible pb-4 pt-2 snap-x snap-mandatory scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none]"
+          onScroll={updateScrollState}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseUp}
+          className="flex flex-row gap-6 overflow-x-auto pb-6 pt-2 snap-x snap-mandatory scroll-smooth scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] cursor-grab active:cursor-grabbing"
         >
           {items.map((item, idx) => (
             <div
               key={item.id || idx}
-              className={`group relative flex flex-col justify-between rounded-xl border border-cyan-500/25 bg-[#030812]/90 p-6 sm:p-7 backdrop-blur-md transition-all duration-300 hover:border-cyan-400/70 hover:shadow-[0_0_28px_rgba(0,229,255,0.18)] hover:-translate-y-1 min-w-[85vw] sm:min-w-[340px] md:min-w-0 snap-center shrink-0 md:shrink ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-              }`}
+              className={`achievement-card group relative flex flex-col justify-between rounded-xl border border-cyan-500/25 bg-[#030812]/90 p-6 sm:p-7 backdrop-blur-md transition-all duration-300 hover:border-cyan-400/70 hover:shadow-[0_0_28px_rgba(0,229,255,0.18)] hover:-translate-y-1 snap-start shrink-0 ${
+                // Width sizing: exactly 3 cards fit in container on md/lg desktop
+                "w-[85vw] sm:w-[calc((100%-1.5rem)/2)] md:w-[calc((100%-3rem)/3)] min-w-[290px] sm:min-w-[320px]"
+              } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
               style={{
-                transitionDelay: `${idx * 120}ms`,
+                transitionDelay: `${idx * 100}ms`,
               }}
             >
               {/* Cyan corner accent bracket ⌞ on bottom-left */}
@@ -224,26 +290,53 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
           ))}
         </div>
 
-        {/* ─── Horizontal Scroll Dots Indicator (Exact match to reference) ─── */}
-        {totalDots > 1 && (
-          <div className="mt-8 flex items-center justify-center gap-2 select-none">
-            {Array.from({ length: totalDots }).map((_, i) => {
-              const isActive = activeIndex === i;
-              return (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => scrollToDot(i)}
-                  className={`h-1 rounded-full transition-all duration-300 focus:outline-none ${
-                    isActive
-                      ? "w-8 bg-cyan-400 shadow-[0_0_10px_#00e5ff]"
-                      : "w-6 bg-zinc-800 hover:bg-zinc-700"
-                  }`}
-                  aria-label={`Go to slide ${i + 1}`}
-                  aria-current={isActive ? "true" : undefined}
-                />
-              );
-            })}
+        {/* ─── Horizontal Scroll Lines Indicator (Exact match to uploaded image) ─── */}
+        {hasHorizontalScroll && (
+          <div className="mt-8 flex items-center justify-center gap-4 select-none">
+            {/* Left Chevron (optional subtle control) */}
+            <button
+              type="button"
+              onClick={() => scrollByDirection("left")}
+              aria-label="Previous achievement"
+              className={`flex h-7 w-7 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950/80 text-zinc-400 transition-all hover:border-cyan-500/60 hover:text-cyan-400 ${
+                canScrollLeft ? "opacity-100 cursor-pointer" : "opacity-30 cursor-not-allowed"
+              }`}
+            >
+              <ChevronLeft className="h-3.5 w-3.5" />
+            </button>
+
+            {/* Exactly the 3 horizontal line indicators from the uploaded screenshot */}
+            <div className="flex items-center gap-3">
+              {Array.from({ length: TOTAL_INDICATOR_SEGMENTS }).map((_, i) => {
+                const isActive = activeIndex === i;
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => scrollToSegment(i)}
+                    className={`h-[2px] w-9 rounded-full transition-all duration-300 focus:outline-none cursor-pointer ${
+                      isActive
+                        ? "bg-[#00E5FF] shadow-[0_0_12px_#00e5ff] scale-y-125"
+                        : "bg-cyan-500/20 hover:bg-cyan-500/40"
+                    }`}
+                    aria-label={`Scroll to achievement section ${i + 1}`}
+                    aria-current={isActive ? "true" : undefined}
+                  />
+                );
+              })}
+            </div>
+
+            {/* Right Chevron */}
+            <button
+              type="button"
+              onClick={() => scrollByDirection("right")}
+              aria-label="Next achievement"
+              className={`flex h-7 w-7 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950/80 text-zinc-400 transition-all hover:border-cyan-500/60 hover:text-cyan-400 ${
+                canScrollRight ? "opacity-100 cursor-pointer" : "opacity-30 cursor-not-allowed"
+              }`}
+            >
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
           </div>
         )}
       </div>
