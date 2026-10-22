@@ -130,6 +130,15 @@ export const DEFAULT_SITE_CONTENT: SiteContent = {
   ],
   achievements: [
     {
+      id: "top-robotics-innovation",
+      title: "Top Autonomous Robotics Innovation Award",
+      date: "OCT 2026",
+      issuer: "National Robotics Forum 2026",
+      description:
+        "Recognized for pioneering multi-agent autonomous navigation and real-time obstacle evasion algorithms.",
+      metric: "1st Place Winner",
+    },
+    {
       id: "national-robotics-award",
       title: "1st Place — National Autonomous Robotics Challenge",
       date: "OCT 2023",
