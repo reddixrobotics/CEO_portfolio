@@ -7,6 +7,14 @@ export const metadata: Metadata = {
     "Engineering robust intelligence in physical space. Autonomous Mobile Robots (AMRs), SLAM navigation, ROS 2 pipelines, and custom embedded motor controllers.",
   keywords: ["Robotics", "AMR", "Autonomous Mobile Robot", "ROS 2", "SLAM", "Embedded", "LiDAR", "Three.js"],
   authors: [{ name: "Reddix Robotics" }],
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/icon.svg",
+  },
 };
 
 export const viewport: Viewport = {
