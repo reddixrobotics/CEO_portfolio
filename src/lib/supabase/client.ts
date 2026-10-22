@@ -25,3 +25,24 @@ export function getSupabaseClient() {
     },
   });
 }
+
+export async function checkSupabaseHealth(): Promise<{
+  configured: boolean;
+  tableReady: boolean;
+  error?: string;
+}> {
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    return { configured: false, tableReady: false, error: "Environment keys not configured" };
+  }
+
+  try {
+    const { error } = await supabase.from("site_content").select("id").limit(1);
+    if (error) {
+      return { configured: true, tableReady: false, error: error.message };
+    }
+    return { configured: true, tableReady: true };
+  } catch (err: any) {
+    return { configured: true, tableReady: false, error: err?.message || "Connection failed" };
+  }
+}

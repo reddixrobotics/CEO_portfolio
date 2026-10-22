@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
-import { getCachedSiteContent, updateSiteContent } from "@/lib/content/contentService";
+import { readStoredContent, updateSiteContent } from "@/lib/content/contentService";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET() {
-  const content = await getCachedSiteContent();
-  return NextResponse.json(content);
+  const content = await readStoredContent();
+  return NextResponse.json(content, {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
+    },
+  });
 }
 
 export async function POST(req: Request) {
@@ -11,10 +20,10 @@ export async function POST(req: Request) {
     const body = await req.json();
     const updated = await updateSiteContent(body, "content-all");
     return NextResponse.json({ success: true, data: updated });
-  } catch (error) {
+  } catch (error: any) {
     console.error("[API content error]", error);
     return NextResponse.json(
-      { success: false, error: "Failed to update content" },
+      { success: false, error: error?.message || "Failed to update content" },
       { status: 500 }
     );
   }

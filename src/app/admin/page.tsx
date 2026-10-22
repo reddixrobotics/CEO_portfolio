@@ -30,6 +30,11 @@ export default function AdminPage() {
   const [authLoading, setAuthLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
+  const [supabaseStatus, setSupabaseStatus] = useState<{
+    configured: boolean;
+    tableReady: boolean;
+    error?: string;
+  } | null>(null);
   const [loginEmail, setLoginEmail] = useState("reddixrobotics@gmail.com");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -73,10 +78,13 @@ export default function AdminPage() {
 
   // Check auth status on mount
   useEffect(() => {
-    fetch("/api/auth")
+    fetch("/api/auth", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         setIsSupabaseConnected(Boolean(data.isSupabaseConnected));
+        if (data.supabaseStatus) {
+          setSupabaseStatus(data.supabaseStatus);
+        }
         if (data.authenticated) {
           setIsAuthenticated(true);
           loadContent();
@@ -87,7 +95,7 @@ export default function AdminPage() {
   }, []);
 
   const loadContent = () => {
-    fetch("/api/content")
+    fetch(`/api/content?t=${Date.now()}`, { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => setContent(data))
       .catch((err) => console.error("Content load failed", err));
@@ -132,9 +140,9 @@ export default function AdminPage() {
     }
   };
 
-  const handleSave = async (updatedContent?: SiteContent) => {
+  const handleSave = async (updatedContent?: SiteContent): Promise<boolean> => {
     const payload = updatedContent || content;
-    if (!payload) return;
+    if (!payload) return false;
 
     setIsSaving(true);
     setSaveSuccess(false);
@@ -152,11 +160,18 @@ export default function AdminPage() {
         setContent(payload);
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 3500);
+        return true;
       } else {
-        setErrorMessage(data.error || "Failed to save updates.");
+        const errorText = data.error || "Failed to save updates.";
+        setErrorMessage(errorText);
+        alert(`Save Failed:\n\n${errorText}`);
+        return false;
       }
-    } catch {
-      setErrorMessage("Network error while saving.");
+    } catch (e: any) {
+      const errorText = e?.message || "Network error while saving.";
+      setErrorMessage(errorText);
+      alert(`Save Network Error:\n\n${errorText}`);
+      return false;
     } finally {
       setIsSaving(false);
     }
@@ -251,14 +266,20 @@ export default function AdminPage() {
     setIsAddingProject(true);
   };
 
-  const handleDeleteProject = (id: string) => {
+  const handleDeleteProject = async (id: string) => {
     if (!content) return;
     if (!confirm("Are you sure you want to delete this project?")) return;
 
+    const previousProjects = content.projects;
     const updatedProjects = content.projects.filter((p) => p.id !== id);
     const updatedContent = { ...content, projects: updatedProjects };
     setContent(updatedContent);
-    handleSave(updatedContent);
+
+    const saved = await handleSave(updatedContent);
+    if (!saved) {
+      // Revert if saving failed
+      setContent({ ...content, projects: previousProjects });
+    }
   };
 
   const handleMoveProject = (idx: number, direction: "up" | "down") => {
@@ -321,14 +342,20 @@ export default function AdminPage() {
     setIsAddingAchievement(true);
   };
 
-  const handleDeleteAchievement = (id: string) => {
+  const handleDeleteAchievement = async (id: string) => {
     if (!content) return;
     if (!confirm("Are you sure you want to delete this achievement?")) return;
 
+    const previousAchievements = content.achievements;
     const updatedAchievements = content.achievements.filter((a) => a.id !== id);
     const updatedContent = { ...content, achievements: updatedAchievements };
     setContent(updatedContent);
-    handleSave(updatedContent);
+
+    const saved = await handleSave(updatedContent);
+    if (!saved) {
+      // Revert if saving failed
+      setContent({ ...content, achievements: previousAchievements });
+    }
   };
 
   // ─── LOADING SCREEN ───
@@ -508,6 +535,39 @@ export default function AdminPage() {
           </button>
         </div>
       </div>
+
+      {/* Supabase Action Required Banner */}
+      {supabaseStatus?.configured && !supabaseStatus?.tableReady && (
+        <div className="flex items-start gap-3 rounded-lg border border-amber-500/50 bg-amber-950/40 p-4 text-xs text-amber-200">
+          <AlertTriangle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-bold uppercase tracking-wider text-amber-300">
+              Action Required: Database Table Not Initialized Yet
+            </p>
+            <p className="mt-1 text-amber-200/90 leading-relaxed">
+              Supabase keys are connected, but the <code className="bg-black/60 px-1 py-0.5 rounded text-cyan-300 font-mono">site_content</code> table was not found in your Supabase database. Deletions and edits will revert on refresh until you run the SQL script in your Supabase SQL editor.
+            </p>
+            <p className="mt-2 text-zinc-300 text-[11px]">
+              👉 Open your Supabase Dashboard → <strong>SQL Editor</strong> → Paste the SQL setup script and click <strong>Run</strong>.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Supabase Missing Keys Banner (when in production / Vercel without env vars) */}
+      {!isSupabaseConnected && !supabaseStatus?.configured && (
+        <div className="flex items-start gap-3 rounded-lg border border-cyan-500/30 bg-cyan-950/20 p-3.5 text-xs text-cyan-200">
+          <AlertTriangle className="h-4 w-4 text-cyan-400 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-cyan-300">
+              Storage Engine: Local Fallback (Supabase Not Connected)
+            </p>
+            <p className="mt-0.5 text-zinc-400 text-[11px] leading-relaxed">
+              To make all deletions, uploads, and edits permanent on your live website, add <code className="text-cyan-300">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="text-cyan-300">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> to your Vercel Environment Variables and redeploy.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Error Alert */}
       {errorMessage && (

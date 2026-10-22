@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { getSupabaseCredentials } from "@/lib/supabase/client";
+import { checkSupabaseHealth } from "@/lib/supabase/client";
 
 const ADMIN_EMAIL = "reddixrobotics@gmail.com";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "reddix@2026";
@@ -10,17 +10,22 @@ const SECRET_TOKEN = "reddix_robotics_auth_token_verified";
 export async function GET() {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
-  const { isConfigured } = getSupabaseCredentials();
+  const health = await checkSupabaseHealth();
 
   if (token === SECRET_TOKEN) {
     return NextResponse.json({
       authenticated: true,
       email: ADMIN_EMAIL,
-      isSupabaseConnected: isConfigured,
+      isSupabaseConnected: health.configured && health.tableReady,
+      supabaseStatus: health,
     });
   }
 
-  return NextResponse.json({ authenticated: false, isSupabaseConnected: isConfigured });
+  return NextResponse.json({
+    authenticated: false,
+    isSupabaseConnected: health.configured && health.tableReady,
+    supabaseStatus: health,
+  });
 }
 
 export async function POST(req: Request) {

@@ -31,7 +31,7 @@ function writeLocalFallback(data: SiteContent): void {
 /**
  * Reads content: checks Supabase cloud database first, then falls back to local JSON.
  */
-async function readStoredContent(): Promise<SiteContent> {
+export async function readStoredContent(): Promise<SiteContent> {
   const supabase = getSupabaseClient();
   if (supabase) {
     try {
@@ -41,11 +41,13 @@ async function readStoredContent(): Promise<SiteContent> {
         .eq("id", "main")
         .maybeSingle();
 
-      if (!error && data?.data) {
+      if (error) {
+        console.warn("[ContentService] Supabase read error:", error.message, error.code);
+      } else if (data?.data) {
         return data.data as SiteContent;
       }
     } catch (err) {
-      console.warn("[ContentService] Supabase read fallback to local", err);
+      console.warn("[ContentService] Supabase read exception fallback to local", err);
     }
   }
 
@@ -55,7 +57,7 @@ async function readStoredContent(): Promise<SiteContent> {
 /**
  * Writes content: saves to Supabase cloud database and syncs local file when possible.
  */
-async function writeStoredContent(data: SiteContent): Promise<void> {
+export async function writeStoredContent(data: SiteContent): Promise<void> {
   const supabase = getSupabaseClient();
   if (supabase) {
     try {
@@ -65,10 +67,14 @@ async function writeStoredContent(data: SiteContent): Promise<void> {
         updated_at: new Date().toISOString(),
       });
       if (error) {
-        console.error("[ContentService] Supabase upsert error", error);
+        console.error("[ContentService] Supabase upsert error:", error);
+        throw new Error(
+          `Supabase Error: ${error.message} (code ${error.code || "unknown"}). Check if the 'site_content' table exists in Supabase SQL editor.`
+        );
       }
-    } catch (err) {
-      console.error("[ContentService] Supabase write failed", err);
+    } catch (err: any) {
+      console.error("[ContentService] Supabase write failed:", err);
+      throw err;
     }
   }
 
