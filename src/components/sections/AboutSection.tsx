@@ -235,7 +235,7 @@ export default function AboutSection({ about }: AboutSectionProps) {
   return (
     <section
       id="about"
-      className="relative flex min-h-screen w-full max-w-full items-center justify-center overflow-hidden border-t border-cyan-950/20 bg-transparent px-4 py-20 font-mono text-[#F5F7FA] sm:px-10 lg:px-14 lg:py-28"
+      className="relative flex min-h-screen w-full max-w-full items-center justify-center overflow-hidden border-t border-cyan-950/20 bg-transparent px-4 py-10 font-mono text-[#F5F7FA] sm:px-8 lg:px-12 xl:px-14 lg:py-14"
     >
 
       {/* ─── Floating Cyan Particles / Dust Specks ─── */}
@@ -263,13 +263,13 @@ export default function AboutSection({ about }: AboutSectionProps) {
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8 xl:gap-12">
           {/* ════════ LEFT COLUMN: DIGITAL CEO PORTRAIT (lg: col-span-4) ════════ */}
           <div className="relative flex flex-col items-center lg:col-span-4 lg:items-start w-full">
-            <div className="relative w-full max-w-[430px]">
+            <div className="relative w-full max-w-[320px] sm:max-w-[360px] xl:max-w-[390px]">
               {/* Holographic Portrait Container with Interactive Pixel & Biometric Scan Animation */}
               <PixelPortrait
                 src="/images/ceo-portrait-clean.png"
                 alt="Raja Rajeshwar Reddy Paturi — Founder & CEO of Reddix Robotics"
-                width={450}
-                height={450}
+                width={400}
+                height={400}
                 priority
                 className="w-full"
               />
@@ -284,31 +284,31 @@ export default function AboutSection({ about }: AboutSectionProps) {
           </div>
 
           {/* ════════ CENTER COLUMN: BIOGRAPHY (lg: col-span-5 with dedicated robot corridor) ════════ */}
-          <div className="flex flex-col justify-center lg:col-span-5 lg:pl-16 xl:col-span-5 xl:pl-24 w-full min-w-0">
+          <div className="flex flex-col justify-center lg:col-span-5 lg:pl-10 xl:col-span-5 xl:pl-16 w-full min-w-0">
             {/* Cyan Role Callout */}
-            <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-cyan-400">
+            <p className="text-[10.5px] font-bold uppercase tracking-[0.28em] text-cyan-400">
               / CEO &amp; FOUNDER
             </p>
 
             {/* Name Heading (White + Steel Blue) */}
-            <div className="mt-2 select-none">
-              <h2 className="text-2xl sm:text-4xl xl:text-5xl font-black uppercase tracking-normal text-white break-words">
+            <div className="mt-1.5 select-none">
+              <h2 className="text-2xl sm:text-3xl xl:text-4xl font-black uppercase tracking-normal text-white break-words">
                 RAJA RAJESHWAR
               </h2>
-              <h3 className="mt-0.5 text-2xl sm:text-4xl xl:text-5xl font-black uppercase tracking-normal text-[#7898BC] break-words">
+              <h3 className="mt-0.5 text-2xl sm:text-3xl xl:text-4xl font-black uppercase tracking-normal text-[#7898BC] break-words">
                 REDDY PATURI
               </h3>
               {/* Short Cyan Underline Bar */}
-              <div className="mt-3.5 h-[3px] w-16 bg-cyan-400 shadow-[0_0_8px_#00e5ff]" />
+              <div className="mt-2.5 h-[3px] w-14 bg-cyan-400 shadow-[0_0_8px_#00e5ff]" />
             </div>
 
             {/* ABOUT ME Heading */}
-            <h4 className="mt-8 text-sm font-bold uppercase tracking-[0.20em] text-white">
+            <h4 className="mt-5 text-xs font-bold uppercase tracking-[0.20em] text-white">
               ABOUT ME
             </h4>
 
             {/* Biography Text Paragraphs */}
-            <div className="mt-4 space-y-4 font-mono text-[13px] leading-[1.8] text-[#A8BED5] max-w-full break-words">
+            <div className="mt-3 space-y-3 font-mono text-[12px] sm:text-[12.5px] leading-[1.7] text-[#A8BED5] max-w-full break-words">
               <p>
                 I&apos;m Raja Rajeshwar Reddy Paturi, the Founder &amp; CEO of
                 Reddix Robotics.
@@ -328,11 +328,11 @@ export default function AboutSection({ about }: AboutSectionProps) {
             </div>
 
             {/* CTA Button: EXPLORE MY WORK -> */}
-            <div className="mt-8 flex flex-wrap items-center gap-4">
+            <div className="mt-6 flex flex-wrap items-center gap-4">
               <a
                 href="#projects"
                 onClick={handleExploreClick}
-                className="group inline-flex min-h-[44px] items-center justify-center gap-3 border border-cyan-400 bg-cyan-950/40 px-5 sm:px-6 py-2.5 font-mono text-xs font-bold uppercase tracking-[0.16em] sm:tracking-[0.22em] text-cyan-300 shadow-[0_0_16px_rgba(0,217,255,0.3)] transition-all duration-300 hover:border-cyan-300 hover:bg-cyan-900/60 hover:text-white hover:shadow-[0_0_24px_rgba(0,217,255,0.6)] cursor-pointer max-w-full"
+                className="group inline-flex min-h-[40px] items-center justify-center gap-3 border border-cyan-400 bg-cyan-950/40 px-5 sm:px-6 py-2 font-mono text-xs font-bold uppercase tracking-[0.16em] sm:tracking-[0.22em] text-cyan-300 shadow-[0_0_16px_rgba(0,217,255,0.3)] transition-all duration-300 hover:border-cyan-300 hover:bg-cyan-900/60 hover:text-white hover:shadow-[0_0_24px_rgba(0,217,255,0.6)] cursor-pointer max-w-full"
                 style={{ borderRadius: "2px" }}
               >
                 <span>EXPLORE MY WORK</span>
@@ -344,8 +344,8 @@ export default function AboutSection({ about }: AboutSectionProps) {
           </div>
 
           {/* ════════ RIGHT SIDEBAR: TECHNICAL EXPERTISE (lg: col-span-3 xl:col-span-3) ════════ */}
-          <div className="mt-6 border-t border-cyan-500/25 pt-8 lg:mt-0 lg:col-span-3 lg:border-t-0 lg:border-l lg:pl-8 xl:col-span-3">
-            <div className="flex flex-col justify-center space-y-9 sm:space-y-11">
+          <div className="mt-6 border-t border-cyan-500/25 pt-6 lg:mt-0 lg:col-span-3 lg:border-t-0 lg:border-l lg:pl-6 xl:col-span-3">
+            <div className="flex flex-col justify-center space-y-6 sm:space-y-7">
               {/* 01 — ROBOTICS & AI */}
               <div className="group flex items-start gap-4">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[2px] border border-cyan-400/40 bg-cyan-950/20 text-cyan-400 shadow-[0_0_12px_rgba(0,217,255,0.12)] transition-colors group-hover:border-cyan-300 group-hover:shadow-[0_0_16px_#00e5ff]">
