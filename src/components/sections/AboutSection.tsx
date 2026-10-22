@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Code2, Cpu, Cog } from "lucide-react";
 import { AboutContent } from "@/lib/content/types";
 import { useSmoothScroll } from "@/components/site/SmoothScrollProvider";
 import PixelPortrait from "@/components/ui/PixelPortrait";
+import CyberDecodeText from "@/components/ui/CyberDecodeText";
 
 interface AboutSectionProps {
   about?: AboutContent;
@@ -219,6 +220,31 @@ function PerspectiveGridCanvas() {
 
 export default function AboutSection({ about }: AboutSectionProps) {
   const { lenis } = useSmoothScroll();
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (window.location.hash === "#about") {
+        setIsInView(true);
+      }
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleExploreClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -234,6 +260,7 @@ export default function AboutSection({ about }: AboutSectionProps) {
 
   return (
     <section
+      ref={sectionRef}
       id="about"
       className="relative flex min-h-screen w-full max-w-full items-center justify-center overflow-hidden border-t border-cyan-950/20 bg-transparent px-4 py-10 font-mono text-[#F5F7FA] sm:px-8 lg:px-12 xl:px-14 lg:py-14"
     >
@@ -287,40 +314,68 @@ export default function AboutSection({ about }: AboutSectionProps) {
           <div className="flex flex-col justify-center lg:col-span-5 lg:pl-10 xl:col-span-5 xl:pl-16 w-full min-w-0">
             {/* Cyan Role Callout */}
             <p className="text-[10.5px] font-bold uppercase tracking-[0.28em] text-cyan-400">
-              / CEO &amp; FOUNDER
+              <CyberDecodeText text="/ CEO & FOUNDER" trigger={isInView} delay={100} speed={24} />
             </p>
 
             {/* Name Heading (White + Steel Blue) */}
             <div className="mt-1.5 select-none">
               <h2 className="text-2xl sm:text-3xl xl:text-4xl font-black uppercase tracking-normal text-white break-words">
-                RAJA RAJESHWAR
+                <CyberDecodeText text="RAJA RAJESHWAR" trigger={isInView} delay={200} speed={22} triggerOnHover />
               </h2>
               <h3 className="mt-0.5 text-2xl sm:text-3xl xl:text-4xl font-black uppercase tracking-normal text-[#7898BC] break-words">
-                REDDY PATURI
+                <CyberDecodeText text="REDDY PATURI" trigger={isInView} delay={340} speed={22} triggerOnHover />
               </h3>
-              {/* Short Cyan Underline Bar */}
-              <div className="mt-2.5 h-[3px] w-14 bg-cyan-400 shadow-[0_0_8px_#00e5ff]" />
+              {/* Short Cyan Underline Bar with expanding animation */}
+              <div
+                className="mt-2.5 h-[3px] bg-cyan-400 shadow-[0_0_8px_#00e5ff] transition-all duration-700 ease-out"
+                style={{
+                  width: isInView ? "56px" : "0px",
+                  opacity: isInView ? 1 : 0,
+                  transitionDelay: "450ms",
+                }}
+              />
             </div>
 
             {/* ABOUT ME Heading */}
             <h4 className="mt-5 text-xs font-bold uppercase tracking-[0.20em] text-white">
-              ABOUT ME
+              <CyberDecodeText text="ABOUT ME" trigger={isInView} delay={420} speed={26} triggerOnHover />
             </h4>
 
-            {/* Biography Text Paragraphs */}
+            {/* Biography Text Paragraphs with staggered reveal */}
             <div className="mt-3 space-y-3 font-mono text-[12px] sm:text-[12.5px] leading-[1.7] text-[#A8BED5] max-w-full break-words">
-              <p>
+              <p
+                className="transition-all duration-700 ease-out"
+                style={{
+                  opacity: isInView ? 1 : 0,
+                  transform: isInView ? "none" : "translateY(12px)",
+                  transitionDelay: "500ms",
+                }}
+              >
                 I&apos;m Raja Rajeshwar Reddy Paturi, the Founder &amp; CEO of
                 Reddix Robotics.
               </p>
-              <p>
+              <p
+                className="transition-all duration-700 ease-out"
+                style={{
+                  opacity: isInView ? 1 : 0,
+                  transform: isInView ? "none" : "translateY(12px)",
+                  transitionDelay: "640ms",
+                }}
+              >
                 I&apos;m passionate about building intelligent autonomous systems
                 that can perceive, decide and act in the real world. My work
                 focuses on robotics, AI, SLAM, and navigation, with a strong
                 interest in creating practical solutions for real-world
                 deployment.
               </p>
-              <p>
+              <p
+                className="transition-all duration-700 ease-out"
+                style={{
+                  opacity: isInView ? 1 : 0,
+                  transform: isInView ? "none" : "translateY(12px)",
+                  transitionDelay: "780ms",
+                }}
+              >
                 I believe in the power of technology to solve meaningful
                 problems and am committed to building systems that bridge the gap
                 between research and real-world impact.
@@ -328,7 +383,14 @@ export default function AboutSection({ about }: AboutSectionProps) {
             </div>
 
             {/* CTA Button: EXPLORE MY WORK -> */}
-            <div className="mt-6 flex flex-wrap items-center gap-4">
+            <div
+              className="mt-6 flex flex-wrap items-center gap-4 transition-all duration-700 ease-out"
+              style={{
+                opacity: isInView ? 1 : 0,
+                transform: isInView ? "none" : "translateY(12px)",
+                transitionDelay: "900ms",
+              }}
+            >
               <a
                 href="#projects"
                 onClick={handleExploreClick}
@@ -353,7 +415,7 @@ export default function AboutSection({ about }: AboutSectionProps) {
                 </div>
                 <div className="flex flex-col">
                   <h5 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-cyan-400 transition-colors group-hover:text-cyan-300">
-                    ROBOTICS &amp; AI
+                    <CyberDecodeText text="ROBOTICS & AI" trigger={isInView} delay={500} triggerOnHover />
                   </h5>
                   <p className="mt-1 font-mono text-[11px] leading-relaxed text-[#A8BED5]">
                     Intelligent systems for real-world impact.
@@ -368,7 +430,7 @@ export default function AboutSection({ about }: AboutSectionProps) {
                 </div>
                 <div className="flex flex-col">
                   <h5 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-cyan-400 transition-colors group-hover:text-cyan-300">
-                    AUTONOMOUS SYSTEMS
+                    <CyberDecodeText text="AUTONOMOUS SYSTEMS" trigger={isInView} delay={650} triggerOnHover />
                   </h5>
                   <p className="mt-1 font-mono text-[11px] leading-relaxed text-[#A8BED5]">
                     Perception, navigation and decision making.
@@ -383,7 +445,7 @@ export default function AboutSection({ about }: AboutSectionProps) {
                 </div>
                 <div className="flex flex-col">
                   <h5 className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-cyan-400 transition-colors group-hover:text-cyan-300">
-                    HARDWARE INTEGRATION
+                    <CyberDecodeText text="HARDWARE INTEGRATION" trigger={isInView} delay={800} triggerOnHover />
                   </h5>
                   <p className="mt-1 font-mono text-[11px] leading-relaxed text-[#A8BED5]">
                     Bridging software and physical robots.

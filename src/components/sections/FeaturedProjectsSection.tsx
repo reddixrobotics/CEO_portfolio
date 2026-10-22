@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProjectItem } from "@/lib/content/types";
+import CyberDecodeText from "@/components/ui/CyberDecodeText";
 
 interface FeaturedProjectsSectionProps {
   projects?: ProjectItem[];
@@ -202,7 +203,7 @@ export default function FeaturedProjectsSection({
                     : "translateX(-30px)",
               }}
             >
-              / OUR PROJECTS
+              <CyberDecodeText text="/ OUR PROJECTS" trigger={isVisible} delay={100} speed={24} />
             </p>
 
             {/* Main Headline (White + Steel Blue) */}
@@ -217,14 +218,14 @@ export default function FeaturedProjectsSection({
               }}
             >
               <h2 className="text-2xl sm:text-4xl xl:text-5xl font-black uppercase tracking-normal text-white leading-[1.05]">
-                INNOVATIVE
+                <CyberDecodeText text="INNOVATIVE" trigger={isVisible} delay={180} speed={22} triggerOnHover />
                 <br />
-                ROBOTICS
+                <CyberDecodeText text="ROBOTICS" trigger={isVisible} delay={280} speed={22} triggerOnHover />
               </h2>
               <h3 className="mt-1 text-2xl sm:text-4xl xl:text-5xl font-black uppercase tracking-normal text-[#7898BC] leading-[1.05]">
-                REAL WORLD
+                <CyberDecodeText text="REAL WORLD" trigger={isVisible} delay={380} speed={22} triggerOnHover />
                 <br />
-                IMPACT
+                <CyberDecodeText text="IMPACT" trigger={isVisible} delay={480} speed={22} triggerOnHover />
               </h3>
               {/* Short Cyan Underline Accent Bar with width expansion */}
               <div
@@ -290,7 +291,7 @@ export default function FeaturedProjectsSection({
               }}
             >
               <span className="font-mono text-[11px] font-bold tracking-[0.24em] text-cyan-400 drop-shadow-[0_0_8px_rgba(0,229,255,0.4)]">
-                /// FEATURED PROJECTS
+                <CyberDecodeText text="/// FEATURED PROJECTS" trigger={isVisible} delay={150} speed={24} />
               </span>
 
               {/* Navigation Controls (Only visible if more than 3 projects) */}
@@ -404,7 +405,13 @@ export default function FeaturedProjectsSection({
                               <div className="mt-2.5 flex flex-col flex-grow">
                                 {/* Project Title */}
                                 <h4 className="font-mono text-xs sm:text-[13px] font-bold uppercase tracking-wider text-white transition-colors group-hover:text-cyan-200 line-clamp-1">
-                                  {item.title}
+                                  <CyberDecodeText
+                                    text={item.title}
+                                    trigger={isVisible}
+                                    delay={cardDelay + 100}
+                                    speed={20}
+                                    triggerOnHover
+                                  />
                                 </h4>
 
                                 {/* Tech Stack Tags */}
