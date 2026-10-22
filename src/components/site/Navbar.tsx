@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSmoothScroll } from "@/components/site/SmoothScrollProvider";
@@ -8,18 +8,26 @@ import { useSmoothScroll } from "@/components/site/SmoothScrollProvider";
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<string>("career");
+  const [activeSection, setActiveSection] = useState<string>("");
   const { lenis } = useSmoothScroll();
+  const isClickScrollingRef = useRef(false);
+  const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const scrollToSection = (id: string, e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     setActiveSection(id);
+    isClickScrollingRef.current = true;
+    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
+    clickTimerRef.current = setTimeout(() => {
+      isClickScrollingRef.current = false;
+    }, 1400);
+
     let el = document.getElementById(id);
-    if (!el && id === "career") {
-      el = document.getElementById("journey");
-    }
     if (!el && id === "journey") {
       el = document.getElementById("career");
+    }
+    if (!el && id === "career") {
+      el = document.getElementById("journey");
     }
     if (!el) {
       window.location.href = `/#${id}`;
@@ -29,7 +37,7 @@ export default function Navbar() {
     if (lenis) {
       lenis.scrollTo(el, {
         offset: -80,
-        duration: 1.2,
+        duration: 1.1,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       });
     } else {
@@ -50,33 +58,46 @@ export default function Navbar() {
 
     if (typeof window !== "undefined" && window.location.hash) {
       const hash = window.location.hash.replace("#", "");
-      if (["career", "journey", "about", "projects", "achievements", "contact"].includes(hash)) {
-        setActiveSection(hash === "journey" ? "career" : hash);
+      if (["journey", "career", "about", "projects", "achievements", "contact"].includes(hash)) {
+        setActiveSection(hash === "career" ? "journey" : hash);
       }
     }
 
-    const sectionIds = ["about", "projects", "career", "journey", "achievements", "contact"];
+    const sectionIds = ["about", "projects", "journey", "achievements", "contact"];
+
     const handleScroll = () => {
-      if (window.scrollY < 200) {
-        setActiveSection("career");
+      if (isClickScrollingRef.current) return;
+
+      if (window.scrollY < 250) {
+        setActiveSection("");
         return;
       }
-      const scrollPos = window.scrollY + 220;
-      for (let i = sectionIds.length - 1; i >= 0; i--) {
-        const id = sectionIds[i];
-        const el = document.getElementById(id);
+
+      const targetY = window.innerHeight * 0.38;
+      let matchedSection = "";
+
+      for (const id of sectionIds) {
+        let el = document.getElementById(id);
+        if (!el && id === "journey") el = document.getElementById("career");
         if (el) {
-          const top = el.offsetTop;
-          if (scrollPos >= top) {
-            setActiveSection(id === "journey" ? "career" : id);
-            return;
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= targetY && rect.bottom > targetY) {
+            matchedSection = id;
+            break;
           }
         }
+      }
+
+      if (matchedSection) {
+        setActiveSection(matchedSection);
       }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
+    };
   }, [pathname]);
 
   return (
@@ -87,7 +108,9 @@ export default function Navbar() {
         onClick={(e) => {
           if (pathname === "/") {
             e.preventDefault();
+            setActiveSection("");
             window.scrollTo({ top: 0, behavior: "smooth" });
+            window.history.pushState(null, "", "/");
           }
         }}
         className="group relative flex items-center gap-1.5 font-mono text-xs font-black uppercase tracking-[0.18em] text-white shrink-0 min-w-0 sm:hidden select-none"
@@ -99,22 +122,22 @@ export default function Navbar() {
         <span className="text-cyan-400 font-extrabold">ROBOTICS</span>
       </Link>
 
-      {/* ─── Left nav: CAREER + ABOUT (Desktop & Tablet) ─── */}
+      {/* ─── Left nav: JOURNEY + ABOUT (Desktop & Tablet) ─── */}
       <nav className="hidden items-center gap-4 sm:flex md:gap-6 lg:gap-8">
-        {/* CAREER */}
+        {/* JOURNEY */}
         <Link
-          href="/#career"
-          onClick={(e) => scrollToSection("career", e)}
+          href="/#journey"
+          onClick={(e) => scrollToSection("journey", e)}
           className={`relative font-mono uppercase transition-colors ${
-            activeSection === "career" || activeSection === "journey"
+            activeSection === "journey"
               ? "font-semibold text-white"
               : "font-medium text-zinc-400 hover:text-white"
           }`}
           style={{ fontSize: "11px", letterSpacing: "0.15em", paddingBottom: "4px" }}
         >
-          <span>CAREER</span>
+          <span>JOURNEY</span>
           {/* Cyan active underline bar */}
-          {(activeSection === "career" || activeSection === "journey") && (
+          {activeSection === "journey" && (
             <span
               className="absolute bottom-0 left-0 block w-full bg-cyan-400"
               style={{ height: "2px", boxShadow: "0 0 8px #00e5ff" }}
@@ -150,6 +173,7 @@ export default function Navbar() {
         onClick={(e) => {
           if (window.location.pathname === "/") {
             e.preventDefault();
+            setActiveSection("");
             window.scrollTo({ top: 0, behavior: "smooth" });
             window.history.pushState(null, "", "/");
           }
@@ -299,7 +323,7 @@ export default function Navbar() {
       >
         <div className="flex flex-col items-center gap-6">
           {[
-            { id: "career", label: "CAREER", href: "/#career" },
+            { id: "journey", label: "JOURNEY", href: "/#journey" },
             { id: "about", label: "ABOUT", href: "/#about" },
             { id: "projects", label: "PROJECTS", href: "/#projects" },
             { id: "achievements", label: "ACHIEVEMENTS", href: "/#achievements" },
