@@ -35,27 +35,23 @@ export default function HeroAboutScene({ hero, about, projects }: HeroAboutScene
         const projectsBottom = projectsEl.getBoundingClientRect().bottom;
 
         if (aboutTop > 0) {
-          // Scrolling Hero -> About
+          // Scrolling Hero -> About: smoothly drive robot to bio dock
           const t = Math.max(0, Math.min(1, 1 - aboutTop / windowHeight));
           p = t;
-        } else if (projectsTop > windowHeight * 0.35) {
-          // Scrolling About -> Featured Projects
-          const t = Math.max(0, Math.min(1, (windowHeight - projectsTop) / (windowHeight * 0.65)));
-          p = 1.0 + t;
+          setIsSceneVisible(true);
+          setCanvasTranslateY(0);
+        } else if (projectsTop > 0) {
+          // In About section, approaching Projects: fade out 3D canvas so Projects has 100% clean full stage
+          p = 1.0;
+          const fade = Math.max(0, Math.min(1, projectsTop / (windowHeight * 0.5)));
+          setIsSceneVisible(fade > 0.05);
+          setCanvasTranslateY(0);
         } else {
-          // Arrived inside Featured Projects: firmly locked at p = 2.0 so robot remains stationary
-          p = 2.0;
-        }
-
-        // When scrolling past projects section, scroll the robot canvas up 1:1 with the projects section
-        // so the robot stays firmly anchored inside the projects section and exits cleanly with it
-        if (projectsBottom < windowHeight) {
-          setCanvasTranslateY(projectsBottom - windowHeight);
-        } else {
+          // Inside Featured Projects and beyond: 3D canvas invisible
+          p = 1.0;
+          setIsSceneVisible(false);
           setCanvasTranslateY(0);
         }
-
-        setIsSceneVisible(projectsBottom > 0);
       } else {
         const scrollY = window.scrollY || 0;
         p = Math.min(2.0, scrollY / windowHeight);
