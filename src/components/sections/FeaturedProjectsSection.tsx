@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -110,6 +110,24 @@ export default function FeaturedProjectsSection({
     items.slice(pageIdx * CARDS_PER_PAGE, (pageIdx + 1) * CARDS_PER_PAGE)
   );
 
+  // Touch swipe support for horizontal scroll
+  const touchStartXRef = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartXRef.current === null || totalPages <= 1) return;
+    const diff = e.changedTouches[0].clientX - touchStartXRef.current;
+    if (diff > 45) {
+      setCurrentPage((p) => (p - 1 + totalPages) % totalPages);
+    } else if (diff < -45) {
+      setCurrentPage((p) => (p + 1) % totalPages);
+    }
+    touchStartXRef.current = null;
+  };
+
   return (
     <section
       id="projects"
@@ -171,7 +189,7 @@ export default function FeaturedProjectsSection({
                 /// FEATURED PROJECTS
               </span>
 
-              {/* Multi-Page Arrows (Only visible if more than 3 projects) */}
+              {/* Navigation Controls (Only visible if more than 3 projects) */}
               {totalPages > 1 && (
                 <div className="flex items-center gap-2">
                   <button
@@ -184,9 +202,6 @@ export default function FeaturedProjectsSection({
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
-                  <span className="font-mono text-[10px] text-zinc-400">
-                    {currentPage + 1} / {totalPages}
-                  </span>
                   <button
                     type="button"
                     onClick={() => setCurrentPage((p) => (p + 1) % totalPages)}
@@ -214,10 +229,14 @@ export default function FeaturedProjectsSection({
                     "polygon(0 0, calc(100% - 23px) 0, 100% 23px, 100% 100%, 0 100%)",
                 }}
               >
-                {/* Multi-Page Carousel Wrapper */}
-                <div className="w-full overflow-hidden">
+                {/* Multi-Page Carousel Wrapper with Touch/Swipe */}
+                <div
+                  className="w-full overflow-hidden"
+                  onTouchStart={handleTouchStart}
+                  onTouchEnd={handleTouchEnd}
+                >
                   <div
-                    className="flex transition-transform duration-500 ease-out"
+                    className="flex transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                     style={{
                       transform: `translateX(-${currentPage * 100}%)`,
                     }}
@@ -288,22 +307,26 @@ export default function FeaturedProjectsSection({
                   </div>
                 </div>
 
-                {/* Bottom Pagination Dots (Only if multiple pages) */}
+                {/* ─── Horizontal Scroll Dots Indicator (Only if more than 3 projects) ─── */}
                 {totalPages > 1 && (
-                  <div className="mt-3 flex items-center justify-center gap-1.5">
-                    {pages.map((_, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => setCurrentPage(i)}
-                        className={`h-1.5 transition-all duration-300 rounded-full ${
-                          currentPage === i
-                            ? "w-6 bg-cyan-400 shadow-[0_0_8px_#00e5ff]"
-                            : "w-1.5 bg-zinc-700 hover:bg-zinc-500"
-                        }`}
-                        aria-label={`Go to page ${i + 1}`}
-                      />
-                    ))}
+                  <div className="mt-4 flex items-center justify-center gap-2 select-none">
+                    {pages.map((_, i) => {
+                      const isActive = currentPage === i;
+                      return (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => setCurrentPage(i)}
+                          className={`transition-all duration-300 rounded-full focus:outline-none ${
+                            isActive
+                              ? "w-7 h-2 bg-cyan-400 shadow-[0_0_12px_#00e5ff]"
+                              : "w-2 h-2 bg-cyan-950/80 border border-cyan-500/40 hover:border-cyan-300 hover:bg-cyan-800/60"
+                          }`}
+                          aria-label={`Go to slide ${i + 1}`}
+                          aria-current={isActive ? "true" : undefined}
+                        />
+                      );
+                    })}
                   </div>
                 )}
               </div>
