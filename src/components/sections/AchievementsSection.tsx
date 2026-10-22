@@ -14,7 +14,7 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
   const [isVisible, setIsVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
 
   // Mouse drag-to-scroll state
   const isDraggingRef = useRef(false);
@@ -64,8 +64,8 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
           },
         ];
 
-  // Exactly 3 horizontal line indicators as shown in the reference image
-  const TOTAL_INDICATOR_SEGMENTS = 3;
+  // Exactly 3 horizontal dashes as in the reference image
+  const TOTAL_INDICATORS = 3;
   const hasHorizontalScroll = items.length > 3;
 
   // Intersection observer for entrance animation
@@ -92,24 +92,24 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
     return () => observer.disconnect();
   }, []);
 
-  // Update scroll indicators & active dash index
+  // Update active indicator index on scroll
   const updateScrollState = useCallback(() => {
     if (!scrollRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
     const maxScroll = scrollWidth - clientWidth;
 
-    setCanScrollLeft(scrollLeft > 10);
-    setCanScrollRight(scrollLeft < maxScroll - 10);
+    setCanScrollLeft(scrollLeft > 8);
+    setCanScrollRight(scrollLeft < maxScroll - 8);
 
     if (maxScroll <= 0) {
       setActiveIndex(0);
       return;
     }
 
-    const progress = scrollLeft / maxScroll;
+    const progress = Math.min(1, Math.max(0, scrollLeft / maxScroll));
     const segment = Math.min(
-      TOTAL_INDICATOR_SEGMENTS - 1,
-      Math.max(0, Math.round(progress * (TOTAL_INDICATOR_SEGMENTS - 1)))
+      TOTAL_INDICATORS - 1,
+      Math.max(0, Math.round(progress * (TOTAL_INDICATORS - 1)))
     );
     setActiveIndex(segment);
   }, []);
@@ -128,7 +128,7 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
     const maxScroll = scrollWidth - clientWidth;
     if (maxScroll <= 0) return;
 
-    const targetLeft = (segmentIdx / (TOTAL_INDICATOR_SEGMENTS - 1)) * maxScroll;
+    const targetLeft = (segmentIdx / (TOTAL_INDICATORS - 1)) * maxScroll;
     scrollRef.current.scrollTo({
       left: targetLeft,
       behavior: "smooth",
@@ -136,7 +136,7 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
     setActiveIndex(segmentIdx);
   };
 
-  // Scroll by 1 card width
+  // Scroll by 1 card
   const scrollByDirection = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
     const cardElement = scrollRef.current.querySelector<HTMLElement>(".achievement-card");
@@ -161,7 +161,7 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
     if (!isDraggingRef.current || !scrollRef.current) return;
     e.preventDefault();
     const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startXRef.current) * 1.5; // Drag speed multiplier
+    const walk = (x - startXRef.current) * 1.5;
     scrollRef.current.scrollLeft = scrollLeftRef.current - walk;
   };
 
@@ -178,7 +178,7 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
       {/* Background radial cyan glow */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_0%,rgba(0,229,255,0.05),transparent)]" />
 
-      <div className="mx-auto max-w-6xl relative z-10">
+      <div className="mx-auto max-w-6xl relative z-10 w-full">
         {/* ─── Header: Exact Match to Reference UI ─── */}
         <div
           className={`flex flex-col md:flex-row md:items-end md:justify-between gap-6 pb-12 transition-all duration-700 ${
@@ -223,8 +223,7 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
           </div>
         </div>
 
-        {/* ─── Cards Horizontal Scroll Container ─── */}
-        {/* On desktop (md & lg), displays exactly 3 cards side-by-side with horizontal scroll for card 4+ */}
+        {/* ─── Cards Horizontal Scroll Container: STRICT SINGLE ROW (NO WRAPPING) ─── */}
         <div
           ref={scrollRef}
           onScroll={updateScrollState}
@@ -232,16 +231,24 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
           onMouseMove={onMouseMove}
           onMouseUp={onMouseUp}
           onMouseLeave={onMouseUp}
-          className="flex flex-row gap-6 overflow-x-auto pb-6 pt-2 snap-x snap-mandatory scroll-smooth scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] cursor-grab active:cursor-grabbing"
+          className="flex flex-row flex-nowrap gap-6 overflow-x-auto w-full pb-6 pt-2 snap-x snap-mandatory scroll-smooth scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] cursor-grab active:cursor-grabbing"
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "nowrap",
+            overflowX: "auto",
+          }}
         >
           {items.map((item, idx) => (
             <div
               key={item.id || idx}
-              className={`achievement-card group relative flex flex-col justify-between rounded-xl border border-cyan-500/25 bg-[#030812]/90 p-6 sm:p-7 backdrop-blur-md transition-all duration-300 hover:border-cyan-400/70 hover:shadow-[0_0_28px_rgba(0,229,255,0.18)] hover:-translate-y-1 snap-start shrink-0 ${
-                // Width sizing: exactly 3 cards fit in container on md/lg desktop
-                "w-[85vw] sm:w-[calc((100%-1.5rem)/2)] md:w-[calc((100%-3rem)/3)] min-w-[290px] sm:min-w-[320px]"
+              className={`achievement-card group relative flex flex-col justify-between rounded-xl border border-cyan-500/25 bg-[#030812]/90 p-6 sm:p-7 backdrop-blur-md transition-all duration-300 hover:border-cyan-400/70 hover:shadow-[0_0_28px_rgba(0,229,255,0.18)] hover:-translate-y-1 snap-start shrink-0 flex-shrink-0 ${
+                // Exact 3 cards width on desktop (md & lg), 2 cards on tablet, 1 card on mobile
+                "w-[85vw] sm:w-[calc((100%-1.5rem)/2)] md:w-[calc((100%-3rem)/3)] md:min-w-[calc((100%-3rem)/3)] md:max-w-[calc((100%-3rem)/3)]"
               } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
               style={{
+                flexShrink: 0,
+                flexGrow: 0,
                 transitionDelay: `${idx * 100}ms`,
               }}
             >
@@ -290,10 +297,10 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
           ))}
         </div>
 
-        {/* ─── Horizontal Scroll Lines Indicator (Exact match to uploaded image) ─── */}
+        {/* ─── Horizontal Scroll Lines Indicator (Exact 3 dashes matching uploaded image) ─── */}
         {hasHorizontalScroll && (
           <div className="mt-8 flex items-center justify-center gap-4 select-none">
-            {/* Left Chevron (optional subtle control) */}
+            {/* Left Chevron */}
             <button
               type="button"
               onClick={() => scrollByDirection("left")}
@@ -307,14 +314,14 @@ export default function AchievementsSection({ achievements = [] }: AchievementsS
 
             {/* Exactly the 3 horizontal line indicators from the uploaded screenshot */}
             <div className="flex items-center gap-3">
-              {Array.from({ length: TOTAL_INDICATOR_SEGMENTS }).map((_, i) => {
+              {Array.from({ length: TOTAL_INDICATORS }).map((_, i) => {
                 const isActive = activeIndex === i;
                 return (
                   <button
                     key={i}
                     type="button"
                     onClick={() => scrollToSegment(i)}
-                    className={`h-[2px] w-9 rounded-full transition-all duration-300 focus:outline-none cursor-pointer ${
+                    className={`h-[2.5px] w-9 rounded-full transition-all duration-300 focus:outline-none cursor-pointer ${
                       isActive
                         ? "bg-[#00E5FF] shadow-[0_0_12px_#00e5ff] scale-y-125"
                         : "bg-cyan-500/20 hover:bg-cyan-500/40"
