@@ -70,61 +70,40 @@ export default function Navbar() {
   }, [pathname]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 flex w-full max-w-full items-center justify-between border-b border-cyan-400/25 bg-black/75 px-4 py-2.5 backdrop-blur-md transition-colors duration-300 sm:px-6 md:px-8 lg:px-10 shadow-[0_1px_12px_rgba(0,229,255,0.08)]">
-      {/* ─── Mobile Brand Identity (visible on < sm) Matching Reference ─── */}
+    <header className="fixed inset-x-0 top-0 z-50 flex w-full max-w-full items-center justify-between border-b border-cyan-400/25 bg-black/85 px-4 py-3 backdrop-blur-md transition-colors duration-300 sm:px-6 md:px-8 lg:px-10 shadow-[0_1px_16px_rgba(0,229,255,0.08)]">
+      {/* ─── Brand Identity: REDDIX ROBOTICS (Visible on ALL screen sizes) ─── */}
       <Link
         href="/"
         onClick={(e) => {
           if (pathname === "/") {
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: "smooth" });
+            window.history.pushState(null, "", "/");
           }
         }}
-        className="group relative flex items-center gap-1.5 font-mono text-xs font-black uppercase tracking-[0.18em] text-white shrink-0 min-w-0 sm:hidden select-none"
+        className="group relative flex items-center gap-1.5 font-mono text-xs font-black uppercase tracking-[0.20em] text-white shrink-0 select-none"
       >
         <span className="relative pb-0.5 text-white">
           REDDIX
           <span className="absolute bottom-0 left-0 h-[2px] w-full bg-cyan-400 shadow-[0_0_8px_#00e5ff]" />
         </span>
-        <span className="text-cyan-400 font-extrabold">ROBOTICS</span>
+        <span className="text-cyan-400 font-extrabold tracking-widest">ROBOTICS</span>
       </Link>
 
-      {/* ─── Left nav: JOURNEY + ABOUT (Desktop & Tablet) ─── */}
-      <nav className="hidden items-center gap-4 sm:flex md:gap-6 lg:gap-8">
-        {/* JOURNEY */}
-        <Link
-          href="/#journey"
-          onClick={(e) => scrollToSection("journey", e)}
-          className={`relative font-mono uppercase transition-colors ${
-            activeSection === "journey"
-              ? "font-semibold text-white"
-              : "font-medium text-zinc-400 hover:text-white"
-          }`}
-          style={{ fontSize: "11px", letterSpacing: "0.15em", paddingBottom: "4px" }}
-        >
-          <TextScramble text="JOURNEY" triggerOnHover={true} />
-          {/* Cyan active underline bar */}
-          {activeSection === "journey" && (
-            <span
-              className="absolute bottom-0 left-0 block w-full bg-cyan-400"
-              style={{ height: "2px", boxShadow: "0 0 8px #00e5ff" }}
-            />
-          )}
-        </Link>
-
+      {/* ─── Desktop & Tablet Navigation Links ─── */}
+      <nav className="hidden items-center gap-5 sm:flex md:gap-7 lg:gap-9">
         {/* ABOUT */}
         <Link
           href="/#about"
           onClick={(e) => scrollToSection("about", e)}
           className={`relative font-mono uppercase transition-colors ${
             activeSection === "about"
-              ? "font-semibold text-white"
+              ? "font-bold text-white"
               : "font-medium text-zinc-400 hover:text-white"
           }`}
           style={{ fontSize: "11px", letterSpacing: "0.15em", paddingBottom: "4px" }}
         >
-          <TextScramble text="ABOUT" triggerOnHover={true} />
-          {/* Cyan active underline bar */}
+          <span>ABOUT</span>
           {activeSection === "about" && (
             <span
               className="absolute bottom-0 left-0 block w-full bg-cyan-400"
@@ -132,56 +111,19 @@ export default function Navbar() {
             />
           )}
         </Link>
-      </nav>
 
-      {/* ─── Center: square >> chevron button ─── */}
-      <Link
-        href="/"
-        onClick={(e) => {
-          if (window.location.pathname === "/") {
-            e.preventDefault();
-            window.scrollTo({ top: 0, behavior: "smooth" });
-            window.history.pushState(null, "", "/");
-          }
-        }}
-        aria-label="Home"
-        className="absolute left-1/2 -translate-x-1/2 hidden md:block"
-      >
-        <div
-          className="flex items-center justify-center border border-zinc-700 bg-zinc-950/90 backdrop-blur-sm transition-colors hover:border-zinc-500"
-          style={{ width: "2.35rem", height: "2.35rem", borderRadius: "6px" }}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            className="text-white"
-            style={{ width: "1.15rem", height: "1.15rem" }}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="m7 7 5 5-5 5" />
-            <path d="m13 7 5 5-5 5" />
-          </svg>
-        </div>
-      </Link>
-
-      {/* ─── Right nav: PROJECTS + ACHIEVEMENTS + CONTACT + ADMIN (Tablet & Desktop) ─── */}
-      <nav className="hidden items-center gap-3 sm:flex md:gap-5 lg:gap-8">
         {/* PROJECTS */}
         <Link
           href="/#projects"
           onClick={(e) => scrollToSection("projects", e)}
           className={`relative font-mono uppercase transition-colors ${
             activeSection === "projects"
-              ? "font-semibold text-white"
+              ? "font-bold text-white"
               : "font-medium text-zinc-400 hover:text-white"
           }`}
           style={{ fontSize: "11px", letterSpacing: "0.15em", paddingBottom: "4px" }}
         >
-          <TextScramble text="PROJECTS" triggerOnHover={true} />
-          {/* Cyan active underline bar */}
+          <span>PROJECTS</span>
           {activeSection === "projects" && (
             <span
               className="absolute bottom-0 left-0 block w-full bg-cyan-400"
@@ -194,15 +136,14 @@ export default function Navbar() {
         <Link
           href="/#achievements"
           onClick={(e) => scrollToSection("achievements", e)}
-          className={`relative hidden md:inline-block font-mono uppercase transition-colors ${
+          className={`relative font-mono uppercase transition-colors ${
             activeSection === "achievements"
-              ? "font-semibold text-white"
+              ? "font-bold text-white"
               : "font-medium text-zinc-400 hover:text-white"
           }`}
           style={{ fontSize: "11px", letterSpacing: "0.15em", paddingBottom: "4px" }}
         >
-          <TextScramble text="ACHIEVEMENTS" triggerOnHover={true} />
-          {/* Cyan active underline bar */}
+          <span>ACHIEVEMENTS</span>
           {activeSection === "achievements" && (
             <span
               className="absolute bottom-0 left-0 block w-full bg-cyan-400"
@@ -223,13 +164,12 @@ export default function Navbar() {
           }}
           className={`relative font-mono uppercase transition-colors ${
             activeSection === "contact"
-              ? "font-semibold text-white"
+              ? "font-bold text-white"
               : "font-medium text-zinc-400 hover:text-white"
           }`}
           style={{ fontSize: "11px", letterSpacing: "0.15em", paddingBottom: "4px" }}
         >
-          <TextScramble text="CONTACT" triggerOnHover={true} />
-          {/* Cyan active underline bar */}
+          <span>CONTACT</span>
           {activeSection === "contact" && (
             <span
               className="absolute bottom-0 left-0 block w-full bg-cyan-400"
@@ -237,14 +177,15 @@ export default function Navbar() {
             />
           )}
         </Link>
-        {/* ADMIN — square-cornered bordered pill */}
+
+        {/* ADMIN — CEO Portal */}
         <Link
           href="/admin"
-          className="border border-zinc-600 font-mono font-medium uppercase text-zinc-300 transition-colors hover:border-zinc-400 hover:text-white"
+          className="border border-cyan-500/40 font-mono font-bold uppercase text-cyan-300 transition-all hover:border-cyan-400 hover:text-white hover:shadow-[0_0_10px_rgba(0,229,255,0.25)]"
           style={{
             fontSize: "10px",
             letterSpacing: "0.15em",
-            padding: "0.28rem 0.65rem",
+            padding: "0.32rem 0.75rem",
             borderRadius: "3px",
           }}
         >
@@ -289,7 +230,6 @@ export default function Navbar() {
       >
         <div className="flex flex-col items-center gap-6">
           {[
-            { id: "journey", label: "JOURNEY", href: "/#journey" },
             { id: "about", label: "ABOUT", href: "/#about" },
             { id: "projects", label: "PROJECTS", href: "/#projects" },
             { id: "achievements", label: "ACHIEVEMENTS", href: "/#achievements" },
