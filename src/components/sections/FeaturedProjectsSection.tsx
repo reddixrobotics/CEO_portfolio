@@ -783,17 +783,17 @@ export default function FeaturedProjectsSection({
                             ┘
                           </span>
 
-                          {/* ─── Thumbnail Image Container with Cyan Scanning Line ─── */}
-                          <div className="relative aspect-[2.15/1] w-full overflow-hidden rounded-[1px] bg-black/80">
+                          {/* ─── Thumbnail Image Container with Cyan Scanning Line (object-contain so all robots fit 100% uncropped) ─── */}
+                          <div className="relative aspect-[16/11] w-full overflow-hidden rounded-[2px] bg-[#020509] border border-cyan-500/15">
                             <Image
                               src={item.image}
                               alt={item.title}
                               fill
                               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
-                              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                              className="object-contain p-1.5 transition-transform duration-500 group-hover:scale-[1.04]"
                             />
                             {/* Subtle Vignette Overlay */}
-                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#04090d] via-transparent to-transparent opacity-60" />
+                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#04090d]/60 via-transparent to-transparent" />
 
                             {/* Thin Cyan Scanning Line across image as shutters open */}
                             <div

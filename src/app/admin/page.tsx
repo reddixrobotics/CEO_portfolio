@@ -857,7 +857,7 @@ export default function AdminPage() {
                   {/* Project thumbnail */}
                   <div className="relative h-16 w-24 sm:h-20 sm:w-32 shrink-0 overflow-hidden rounded-lg border border-zinc-700 bg-zinc-900">
                     {proj.image ? (
-                      <img src={proj.image} alt={proj.title} className="h-full w-full object-cover" />
+                      <img src={proj.image} alt={proj.title} className="h-full w-full object-contain p-1" />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-zinc-600">
                         <ImageIcon className="h-6 w-6" />
