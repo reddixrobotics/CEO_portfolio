@@ -3,19 +3,24 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import TextScramble from "@/components/ui/TextScramble";
 import { useSmoothScroll } from "@/components/site/SmoothScrollProvider";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<string>("journey");
+  const [activeSection, setActiveSection] = useState<string>("career");
   const { lenis } = useSmoothScroll();
 
   const scrollToSection = (id: string, e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     setActiveSection(id);
-    const el = document.getElementById(id);
+    let el = document.getElementById(id);
+    if (!el && id === "career") {
+      el = document.getElementById("journey");
+    }
+    if (!el && id === "journey") {
+      el = document.getElementById("career");
+    }
     if (!el) {
       window.location.href = `/#${id}`;
       return;
@@ -45,20 +50,25 @@ export default function Navbar() {
 
     if (typeof window !== "undefined" && window.location.hash) {
       const hash = window.location.hash.replace("#", "");
-      if (["journey", "about", "projects", "achievements", "contact"].includes(hash)) {
-        setActiveSection(hash);
+      if (["career", "journey", "about", "projects", "achievements", "contact"].includes(hash)) {
+        setActiveSection(hash === "journey" ? "career" : hash);
       }
     }
 
-    const sectionIds = ["about", "projects", "journey", "achievements", "contact"];
+    const sectionIds = ["about", "projects", "career", "journey", "achievements", "contact"];
     const handleScroll = () => {
+      if (window.scrollY < 200) {
+        setActiveSection("career");
+        return;
+      }
       const scrollPos = window.scrollY + 220;
       for (let i = sectionIds.length - 1; i >= 0; i--) {
-        const el = document.getElementById(sectionIds[i]);
+        const id = sectionIds[i];
+        const el = document.getElementById(id);
         if (el) {
           const top = el.offsetTop;
           if (scrollPos >= top) {
-            setActiveSection(sectionIds[i]);
+            setActiveSection(id === "journey" ? "career" : id);
             return;
           }
         }
@@ -70,8 +80,8 @@ export default function Navbar() {
   }, [pathname]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 flex w-full max-w-full items-center justify-between border-b border-cyan-400/25 bg-black/75 px-4 py-2.5 backdrop-blur-md transition-colors duration-300 sm:px-6 md:px-8 lg:px-10 shadow-[0_1px_12px_rgba(0,229,255,0.08)]">
-      {/* ─── Mobile Brand Identity (visible on < sm) Matching Reference ─── */}
+    <header className="fixed inset-x-0 top-0 z-50 flex w-full max-w-full items-center justify-between border-b border-white/5 bg-black/60 px-4 py-2.5 backdrop-blur-md transition-colors duration-300 sm:px-6 md:px-8 lg:px-10">
+      {/* ─── Mobile Brand Identity (visible on < sm) ─── */}
       <Link
         href="/"
         onClick={(e) => {
@@ -89,22 +99,22 @@ export default function Navbar() {
         <span className="text-cyan-400 font-extrabold">ROBOTICS</span>
       </Link>
 
-      {/* ─── Left nav: JOURNEY + ABOUT (Desktop & Tablet) ─── */}
+      {/* ─── Left nav: CAREER + ABOUT (Desktop & Tablet) ─── */}
       <nav className="hidden items-center gap-4 sm:flex md:gap-6 lg:gap-8">
-        {/* JOURNEY */}
+        {/* CAREER */}
         <Link
-          href="/#journey"
-          onClick={(e) => scrollToSection("journey", e)}
+          href="/#career"
+          onClick={(e) => scrollToSection("career", e)}
           className={`relative font-mono uppercase transition-colors ${
-            activeSection === "journey"
+            activeSection === "career" || activeSection === "journey"
               ? "font-semibold text-white"
               : "font-medium text-zinc-400 hover:text-white"
           }`}
           style={{ fontSize: "11px", letterSpacing: "0.15em", paddingBottom: "4px" }}
         >
-          <TextScramble text="JOURNEY" triggerOnHover={true} />
+          <span>CAREER</span>
           {/* Cyan active underline bar */}
-          {activeSection === "journey" && (
+          {(activeSection === "career" || activeSection === "journey") && (
             <span
               className="absolute bottom-0 left-0 block w-full bg-cyan-400"
               style={{ height: "2px", boxShadow: "0 0 8px #00e5ff" }}
@@ -123,7 +133,7 @@ export default function Navbar() {
           }`}
           style={{ fontSize: "11px", letterSpacing: "0.15em", paddingBottom: "4px" }}
         >
-          <TextScramble text="ABOUT" triggerOnHover={true} />
+          <span>ABOUT</span>
           {/* Cyan active underline bar */}
           {activeSection === "about" && (
             <span
@@ -180,7 +190,7 @@ export default function Navbar() {
           }`}
           style={{ fontSize: "11px", letterSpacing: "0.15em", paddingBottom: "4px" }}
         >
-          <TextScramble text="PROJECTS" triggerOnHover={true} />
+          <span>PROJECTS</span>
           {/* Cyan active underline bar */}
           {activeSection === "projects" && (
             <span
@@ -201,7 +211,7 @@ export default function Navbar() {
           }`}
           style={{ fontSize: "11px", letterSpacing: "0.15em", paddingBottom: "4px" }}
         >
-          <TextScramble text="ACHIEVEMENTS" triggerOnHover={true} />
+          <span>ACHIEVEMENTS</span>
           {/* Cyan active underline bar */}
           {activeSection === "achievements" && (
             <span
@@ -228,7 +238,7 @@ export default function Navbar() {
           }`}
           style={{ fontSize: "11px", letterSpacing: "0.15em", paddingBottom: "4px" }}
         >
-          <TextScramble text="CONTACT" triggerOnHover={true} />
+          <span>CONTACT</span>
           {/* Cyan active underline bar */}
           {activeSection === "contact" && (
             <span
@@ -237,6 +247,7 @@ export default function Navbar() {
             />
           )}
         </Link>
+
         {/* ADMIN — square-cornered bordered pill */}
         <Link
           href="/admin"
@@ -252,29 +263,28 @@ export default function Navbar() {
         </Link>
       </nav>
 
-      {/* ─── Mobile 3-line cyan hamburger button (touch-friendly min-h 44px) ─── */}
+      {/* ─── Mobile Hamburger Toggle (visible on < sm) ─── */}
       <button
         type="button"
-        suppressHydrationWarning
-        aria-label="Open menu"
-        aria-expanded={mobileMenuOpen}
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="ml-auto flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center transition-colors sm:hidden"
+        className="relative z-50 flex h-9 w-9 items-center justify-center rounded border border-zinc-800 bg-zinc-950/80 text-zinc-400 transition-colors hover:border-zinc-600 hover:text-white sm:hidden"
+        aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+        aria-expanded={mobileMenuOpen}
       >
-        <span className="relative flex flex-col justify-between h-3.5 w-5">
+        <span className="flex flex-col items-center justify-center gap-1.5">
           <span
-            className={`block h-[2px] w-5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00e5ff] transition-all duration-300 origin-center ${
-              mobileMenuOpen ? "translate-y-[6px] rotate-45" : ""
+            className={`block h-0.5 w-4 bg-current transition-transform duration-300 ${
+              mobileMenuOpen ? "translate-y-2 rotate-45" : ""
             }`}
           />
           <span
-            className={`block h-[2px] w-5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00e5ff] transition-opacity duration-300 ${
-              mobileMenuOpen ? "opacity-0" : "opacity-100"
+            className={`block h-0.5 w-4 bg-current transition-opacity duration-300 ${
+              mobileMenuOpen ? "opacity-0" : ""
             }`}
           />
           <span
-            className={`block h-[2px] w-5 rounded-full bg-cyan-400 shadow-[0_0_6px_#00e5ff] transition-all duration-300 origin-center ${
-              mobileMenuOpen ? "-translate-y-[6px] -rotate-45" : ""
+            className={`block h-0.5 w-4 bg-current transition-transform duration-300 ${
+              mobileMenuOpen ? "-translate-y-2 -rotate-45" : ""
             }`}
           />
         </span>
@@ -289,7 +299,7 @@ export default function Navbar() {
       >
         <div className="flex flex-col items-center gap-6">
           {[
-            { id: "journey", label: "JOURNEY", href: "/#journey" },
+            { id: "career", label: "CAREER", href: "/#career" },
             { id: "about", label: "ABOUT", href: "/#about" },
             { id: "projects", label: "PROJECTS", href: "/#projects" },
             { id: "achievements", label: "ACHIEVEMENTS", href: "/#achievements" },
