@@ -17,6 +17,7 @@ export default function HeroAboutScene({ hero, about, projects }: HeroAboutScene
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isSceneVisible, setIsSceneVisible] = useState(true);
+  const [isRobotVisible, setIsRobotVisible] = useState(true);
   const [canvasTranslateY, setCanvasTranslateY] = useState(0);
 
   useEffect(() => {
@@ -38,16 +39,22 @@ export default function HeroAboutScene({ hero, about, projects }: HeroAboutScene
           // Scrolling Hero -> About
           const t = Math.max(0, Math.min(1, 1 - aboutTop / windowHeight));
           p = t;
-        } else if (projectsTop > windowHeight * 0.35) {
-          // Scrolling About -> Featured Projects
-          const t = Math.max(0, Math.min(1, (windowHeight - projectsTop) / (windowHeight * 0.65)));
-          p = 1.0 + t;
+        } else if (projectsTop > 0) {
+          // In About section: firmly lock robot at p = 1.0 parked in the About dock
+          p = 1.0;
         } else {
-          // Arrived inside Featured Projects
+          // Arrived inside Projects section
           p = 2.0;
         }
 
-        // When scrolling past projects section, scroll the robot canvas up 1:1
+        // Only hide the 3D robot when Projects has scrolled past the upper middle screen
+        if (projectsTop <= windowHeight * 0.45) {
+          setIsRobotVisible(false);
+        } else {
+          setIsRobotVisible(true);
+        }
+
+        // When scrolling past projects section, scroll the canvas up with it
         if (projectsBottom < windowHeight) {
           setCanvasTranslateY(projectsBottom - windowHeight);
         } else {
@@ -60,6 +67,7 @@ export default function HeroAboutScene({ hero, about, projects }: HeroAboutScene
         p = Math.min(2.0, scrollY / windowHeight);
         setCanvasTranslateY(0);
         setIsSceneVisible(true);
+        setIsRobotVisible(true);
       }
 
       setScrollProgress(p);
@@ -81,12 +89,12 @@ export default function HeroAboutScene({ hero, about, projects }: HeroAboutScene
 
   return (
     <div ref={containerRef} className="relative w-full max-w-full overflow-x-clip">
-      {/* ─── Continuous 3D Robot Canvas (persists across Hero and About, fades out cleanly before Featured Projects) ─── */}
+      {/* ─── Continuous 3D Robot Canvas (visible in Hero and About, fades out cleanly for Featured Projects) ─── */}
       <div
         id="robot-canvas-container"
         className="pointer-events-none fixed inset-0 z-[2] h-screen w-full max-w-full overflow-hidden transition-opacity duration-500"
         style={{
-          opacity: isSceneVisible && scrollProgress < 1.15 ? 1 : 0,
+          opacity: isSceneVisible && isRobotVisible ? 1 : 0,
           transform: `translate3d(0, ${canvasTranslateY}px, 0)`,
           willChange: "transform",
         }}

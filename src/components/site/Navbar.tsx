@@ -68,28 +68,33 @@ export default function Navbar() {
     const handleScroll = () => {
       if (isClickScrollingRef.current) return;
 
-      if (window.scrollY < 250) {
+      if (window.scrollY < 200) {
         setActiveSection("");
         return;
       }
 
-      const targetY = window.innerHeight * 0.38;
-      let matchedSection = "";
+      let maxVisible = 0;
+      let dominantSection = "";
+      const vh = window.innerHeight || 800;
 
       for (const id of sectionIds) {
         let el = document.getElementById(id);
         if (!el && id === "journey") el = document.getElementById("career");
         if (el) {
           const rect = el.getBoundingClientRect();
-          if (rect.top <= targetY && rect.bottom > targetY) {
-            matchedSection = id;
-            break;
+          const visibleTop = Math.max(0, rect.top);
+          const visibleBottom = Math.min(vh, rect.bottom);
+          const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+
+          if (visibleHeight > maxVisible) {
+            maxVisible = visibleHeight;
+            dominantSection = id;
           }
         }
       }
 
-      if (matchedSection) {
-        setActiveSection(matchedSection);
+      if (dominantSection && maxVisible > 120) {
+        setActiveSection(dominantSection);
       }
     };
 
