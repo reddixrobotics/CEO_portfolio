@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -110,6 +110,38 @@ export default function FeaturedProjectsSection({
     items.slice(pageIdx * CARDS_PER_PAGE, (pageIdx + 1) * CARDS_PER_PAGE)
   );
 
+  // IntersectionObserver for scroll & refresh entrance animation
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+      setPrefersReducedMotion(mq.matches);
+
+      // If page is loaded or refreshed with hash #projects or already scrolled
+      if (window.location.hash === "#projects") {
+        setIsVisible(true);
+      }
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   // Touch swipe support for horizontal scroll
   const touchStartXRef = useRef<number | null>(null);
 
@@ -130,21 +162,60 @@ export default function FeaturedProjectsSection({
 
   return (
     <section
+      ref={sectionRef}
       id="projects"
       className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-transparent px-4 sm:px-8 lg:px-12 xl:px-14 py-20 lg:py-24 font-mono text-[#F5F7FA]"
     >
+      {/* ─── Cybernetic Animation Keyframes ─── */}
+      <style jsx global>{`
+        @keyframes cyberScanSweep {
+          0% {
+            top: 0%;
+            opacity: 0;
+          }
+          15% {
+            opacity: 0.95;
+          }
+          85% {
+            opacity: 0.95;
+          }
+          100% {
+            top: 100%;
+            opacity: 0;
+          }
+        }
+      `}</style>
+
       {/* ─── Main Content Container matching exact reference composition ─── */}
       <div className="relative mx-auto w-full max-w-[1550px]">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-8 xl:gap-10">
           {/* ════════ LEFT COLUMN: INTRODUCTION & CALL TO ACTION (lg: col-span-4) ════════ */}
           <div className="flex flex-col justify-center select-none lg:col-span-4 xl:col-span-4 relative z-10">
             {/* Cyan Category Eyebrow */}
-            <p className="font-mono text-xs font-bold uppercase tracking-[0.26em] text-cyan-400">
+            <p
+              className="font-mono text-xs font-bold uppercase tracking-[0.26em] text-cyan-400 transition-all duration-700 ease-out"
+              style={{
+                opacity: isVisible || prefersReducedMotion ? 1 : 0,
+                transform:
+                  isVisible || prefersReducedMotion
+                    ? "none"
+                    : "translateX(-30px)",
+              }}
+            >
               / OUR PROJECTS
             </p>
 
             {/* Main Headline (White + Steel Blue) */}
-            <div className="mt-3">
+            <div
+              className="mt-3 transition-all duration-700 ease-out delay-100"
+              style={{
+                opacity: isVisible || prefersReducedMotion ? 1 : 0,
+                transform:
+                  isVisible || prefersReducedMotion
+                    ? "none"
+                    : "translateY(24px)",
+              }}
+            >
               <h2 className="text-2xl sm:text-4xl xl:text-5xl font-black uppercase tracking-normal text-white leading-[1.05]">
                 INNOVATIVE
                 <br />
@@ -155,18 +226,42 @@ export default function FeaturedProjectsSection({
                 <br />
                 IMPACT
               </h3>
-              {/* Short Cyan Underline Accent Bar */}
-              <div className="mt-3.5 h-[3px] w-14 bg-cyan-400 shadow-[0_0_10px_#00e5ff]" />
+              {/* Short Cyan Underline Accent Bar with width expansion */}
+              <div
+                className="mt-3.5 h-[3px] bg-cyan-400 shadow-[0_0_10px_#00e5ff] transition-all duration-700 ease-out delay-300"
+                style={{
+                  width: isVisible || prefersReducedMotion ? "56px" : "0px",
+                  opacity: isVisible || prefersReducedMotion ? 1 : 0,
+                }}
+              />
             </div>
 
             {/* Description Paragraph */}
-            <p className="mt-6 font-mono text-[13px] leading-[1.8] text-[#A8BED5] max-w-[380px]">
+            <p
+              className="mt-6 font-mono text-[13px] leading-[1.8] text-[#A8BED5] max-w-[380px] transition-all duration-700 ease-out delay-200"
+              style={{
+                opacity: isVisible || prefersReducedMotion ? 1 : 0,
+                transform:
+                  isVisible || prefersReducedMotion
+                    ? "none"
+                    : "translateY(20px)",
+              }}
+            >
               Explore our projects where cutting-edge robotics, AI and
               autonomous systems come together to solve real-world challenges.
             </p>
 
             {/* VIEW ALL PROJECTS -> CTA Button */}
-            <div className="mt-8">
+            <div
+              className="mt-8 transition-all duration-700 ease-out delay-300"
+              style={{
+                opacity: isVisible || prefersReducedMotion ? 1 : 0,
+                transform:
+                  isVisible || prefersReducedMotion
+                    ? "none"
+                    : "translateY(16px)",
+              }}
+            >
               <Link
                 href="https://github.com"
                 target="_blank"
@@ -184,7 +279,16 @@ export default function FeaturedProjectsSection({
           {/* ════════ RIGHT COLUMN: CYBERPUNK HUD FEATURED PROJECTS FRAME (lg: col-span-8) ════════ */}
           <div className="lg:col-span-8 flex flex-col relative z-20 w-full">
             {/* Header Badge: /// FEATURED PROJECTS */}
-            <div className="mb-2.5 flex items-center justify-between select-none">
+            <div
+              className="mb-2.5 flex items-center justify-between select-none transition-all duration-700 ease-out"
+              style={{
+                opacity: isVisible || prefersReducedMotion ? 1 : 0,
+                transform:
+                  isVisible || prefersReducedMotion
+                    ? "none"
+                    : "translateY(-12px)",
+              }}
+            >
               <span className="font-mono text-[11px] font-bold tracking-[0.24em] text-cyan-400 drop-shadow-[0_0_8px_rgba(0,229,255,0.4)]">
                 /// FEATURED PROJECTS
               </span>
@@ -216,10 +320,15 @@ export default function FeaturedProjectsSection({
 
             {/* Outer HUD Container with Chamfered Top-Right Corner matching reference */}
             <div
-              className="p-[1.5px] rounded-xl bg-gradient-to-br from-cyan-400/90 via-cyan-500/50 to-cyan-400/80 shadow-[0_0_32px_rgba(0,217,255,0.16)] transition-all duration-300"
+              className="p-[1.5px] rounded-xl bg-gradient-to-br from-cyan-400/90 via-cyan-500/50 to-cyan-400/80 shadow-[0_0_32px_rgba(0,217,255,0.16)] transition-all duration-800 ease-out"
               style={{
                 clipPath:
                   "polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 0 100%)",
+                opacity: isVisible || prefersReducedMotion ? 1 : 0,
+                transform:
+                  isVisible || prefersReducedMotion ? "scale(1)" : "scale(0.97)",
+                filter:
+                  isVisible || prefersReducedMotion ? "none" : "blur(4px)",
               }}
             >
               <div
@@ -246,62 +355,100 @@ export default function FeaturedProjectsSection({
                         key={pageIdx}
                         className="w-full flex-shrink-0 grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3 lg:gap-4"
                       >
-                        {pageItems.map((item) => (
-                          <div
-                            key={item.id}
-                            tabIndex={0}
-                            className="group relative flex flex-col justify-between overflow-hidden rounded-lg border border-cyan-500/30 bg-[#03080d]/85 p-3 sm:p-3.5 outline-none transition-all duration-300 hover:border-cyan-400/80 hover:bg-[#05101a] hover:shadow-[0_0_24px_rgba(0,229,255,0.22)] shadow-[0_0_12px_rgba(0,229,255,0.06)]"
-                          >
-                            {/* ─── Studio-Grade Robot Thumbnail Image ─── */}
-                            <div className="relative aspect-[1.18/1] w-full overflow-hidden rounded-md bg-gradient-to-b from-[#081524] via-[#040b12] to-[#010408] border border-cyan-900/30 p-2 flex items-center justify-center">
-                              <Image
-                                src={item.image}
-                                alt={item.title}
-                                fill
-                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                className="object-contain p-1.5 transition-transform duration-500 group-hover:scale-[1.05]"
-                              />
-                              {/* Bottom Vignette for seamless contrast */}
-                              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#03080d] to-transparent opacity-75" />
+                        {pageItems.map((item, idx) => {
+                          const cardDelay = 220 + idx * 140;
+
+                          return (
+                            <div
+                              key={item.id}
+                              tabIndex={0}
+                              className="group relative flex flex-col justify-between overflow-hidden rounded-lg border border-cyan-500/30 bg-[#03080d]/85 p-3 sm:p-3.5 outline-none transition-all duration-500 hover:border-cyan-400 hover:bg-[#05101a] hover:-translate-y-1 hover:shadow-[0_0_28px_rgba(0,229,255,0.25)] shadow-[0_0_12px_rgba(0,229,255,0.06)]"
+                              style={{
+                                opacity: isVisible || prefersReducedMotion ? 1 : 0,
+                                transform:
+                                  isVisible || prefersReducedMotion
+                                    ? "translateY(0)"
+                                    : "translateY(36px)",
+                                transitionDuration: "750ms",
+                                transitionDelay: prefersReducedMotion
+                                  ? "0ms"
+                                  : `${cardDelay}ms`,
+                              }}
+                            >
+                              {/* ─── Studio-Grade Robot Thumbnail Image with Animated Scan ─── */}
+                              <div className="relative aspect-[1.18/1] w-full overflow-hidden rounded-md bg-gradient-to-b from-[#081524] via-[#040b12] to-[#010408] border border-cyan-900/30 p-2 flex items-center justify-center">
+                                <Image
+                                  src={item.image}
+                                  alt={item.title}
+                                  fill
+                                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                  className="object-contain p-1.5 transition-transform duration-500 group-hover:scale-[1.06]"
+                                />
+                                {/* Bottom Vignette for seamless contrast */}
+                                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#03080d] to-transparent opacity-75" />
+
+                                {/* Single-pass sci-fi laser scanline sweep upon section arrival/refresh */}
+                                {isVisible && !prefersReducedMotion && (
+                                  <div
+                                    className="pointer-events-none absolute inset-x-0 h-[2px] bg-cyan-300 shadow-[0_0_10px_#00e5ff]"
+                                    style={{
+                                      animation:
+                                        "cyberScanSweep 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards",
+                                      animationDelay: `${cardDelay + 250}ms`,
+                                    }}
+                                  />
+                                )}
+                              </div>
+
+                              {/* ─── Card Text Content ─── */}
+                              <div className="mt-2.5 flex flex-col flex-grow">
+                                {/* Project Title */}
+                                <h4 className="font-mono text-xs sm:text-[13px] font-bold uppercase tracking-wider text-white transition-colors group-hover:text-cyan-200 line-clamp-1">
+                                  {item.title}
+                                </h4>
+
+                                {/* Tech Stack Tags */}
+                                <p className="mt-1 font-mono text-[9.5px] sm:text-[10px] uppercase tracking-wider text-[#6189B0] line-clamp-1">
+                                  {item.tags}
+                                </p>
+
+                                {/* Short Cyan Divider Line that expands on arrival */}
+                                <div
+                                  className="my-2.5 h-[1.5px] w-6 bg-cyan-400 shadow-[0_0_6px_#00e5ff] transition-transform duration-500 ease-out origin-left"
+                                  style={{
+                                    transform:
+                                      isVisible || prefersReducedMotion
+                                        ? "scaleX(1)"
+                                        : "scaleX(0)",
+                                    transitionDelay: prefersReducedMotion
+                                      ? "0ms"
+                                      : `${cardDelay + 300}ms`,
+                                  }}
+                                />
+
+                                {/* Project Description */}
+                                <p className="font-mono text-[10px] sm:text-[11px] leading-relaxed text-zinc-400 line-clamp-3">
+                                  {item.description}
+                                </p>
+                              </div>
+
+                              {/* ─── VIEW PROJECT -> Action Link ─── */}
+                              <div className="mt-4 pt-2.5 border-t border-cyan-950/40">
+                                <a
+                                  href={item.link}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-cyan-400 transition-colors hover:text-cyan-300 group-hover:translate-x-0.5"
+                                >
+                                  <span>VIEW PROJECT</span>
+                                  <span className="transition-transform duration-300 group-hover:translate-x-1">
+                                    →
+                                  </span>
+                                </a>
+                              </div>
                             </div>
-
-                            {/* ─── Card Text Content ─── */}
-                            <div className="mt-2.5 flex flex-col flex-grow">
-                              {/* Project Title */}
-                              <h4 className="font-mono text-xs sm:text-[13px] font-bold uppercase tracking-wider text-white transition-colors group-hover:text-cyan-200 line-clamp-1">
-                                {item.title}
-                              </h4>
-
-                              {/* Tech Stack Tags */}
-                              <p className="mt-1 font-mono text-[9.5px] sm:text-[10px] uppercase tracking-wider text-[#6189B0] line-clamp-1">
-                                {item.tags}
-                              </p>
-
-                              {/* Short Cyan Divider Line */}
-                              <div className="my-2.5 h-[1.5px] w-6 bg-cyan-400 shadow-[0_0_6px_#00e5ff]" />
-
-                              {/* Project Description */}
-                              <p className="font-mono text-[10px] sm:text-[11px] leading-relaxed text-zinc-400 line-clamp-3">
-                                {item.description}
-                              </p>
-                            </div>
-
-                            {/* ─── VIEW PROJECT -> Action Link ─── */}
-                            <div className="mt-4 pt-2.5 border-t border-cyan-950/40">
-                              <a
-                                href={item.link}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-cyan-400 transition-colors hover:text-cyan-300 group-hover:translate-x-0.5"
-                              >
-                                <span>VIEW PROJECT</span>
-                                <span className="transition-transform duration-300 group-hover:translate-x-1">
-                                  →
-                                </span>
-                              </a>
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     ))}
                   </div>
