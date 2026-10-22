@@ -112,34 +112,8 @@ function CinematicRobotScene({
         targetAboutPos.current.z = isMobile ? -0.8 : 0.15;
       }
 
-      const projDock = document.getElementById("projects-robot-dock");
-      if (projDock) {
-        const rect = projDock.getBoundingClientRect();
-        if (rect.width > 0 || rect.height > 0) {
-          const screenX = rect.left + rect.width / 2;
-          const screenY = rect.top + rect.height / 2;
-          const ndcX = (screenX / window.innerWidth) * 2 - 1;
-          const ndcY = -(screenY / window.innerHeight) * 2 + 1;
-          ndcVec.set(ndcX, ndcY);
-          raycaster.setFromCamera(ndcVec, state.camera);
-          const hit = new THREE.Vector3();
-          if (raycaster.ray.intersectPlane(floorPlane, hit)) {
-            if (isDesktop || isLaptop) {
-              targetProjPos.current.x = THREE.MathUtils.clamp(hit.x, -1.40, -0.65);
-              targetProjPos.current.z = THREE.MathUtils.clamp(hit.z, -0.3, 0.4);
-            } else if (isTablet) {
-              targetProjPos.current.x = THREE.MathUtils.clamp(hit.x, -0.85, 0.2);
-              targetProjPos.current.z = THREE.MathUtils.clamp(hit.z, -0.6, 0.3);
-            } else {
-              targetProjPos.current.x = THREE.MathUtils.clamp(hit.x, -0.4, 0.4);
-              targetProjPos.current.z = THREE.MathUtils.clamp(hit.z, -0.8, 0.2);
-            }
-          }
-        }
-      } else {
-        targetProjPos.current.x = isDesktop ? -0.98 : isLaptop ? -0.88 : isTablet ? -0.45 : 0.0;
-        targetProjPos.current.z = 0.15;
-      }
+      targetProjPos.current.x = isDesktop ? -0.42 : isTablet ? -0.25 : 0.0;
+      targetProjPos.current.z = 0.20;
     }
 
     // --- Responsive Waypoint Calculations ---
@@ -183,10 +157,10 @@ function CinematicRobotScene({
     const aboutRotY = isDesktop || isLaptop ? -0.12 : 0.0;
 
     // Target 2 (Featured Projects section):
-    const projX = isDesktop || isLaptop ? targetProjPos.current.x : isTablet ? -0.45 : 0.0;
+    const projX = isDesktop ? targetProjPos.current.x : isTablet ? -0.25 : 0.0;
     const projZ = targetProjPos.current.z;
-    const projScale = isDesktop ? 0.58 : isLaptop ? 0.52 : isTablet ? 0.44 : 0.36;
-    const projRotY = isDesktop || isLaptop ? -0.20 : 0.0;
+    const projScale = isDesktop ? 0.68 : isTablet ? 0.52 : 0.38;
+    const projRotY = isDesktop ? -0.15 : 0.0;
 
     let posX = startX;
     let posZ = startZ;

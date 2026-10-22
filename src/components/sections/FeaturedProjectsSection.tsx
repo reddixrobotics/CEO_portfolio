@@ -519,22 +519,22 @@ export default function FeaturedProjectsSection({
             </div>
           </div>
 
-          {/* ════════ CENTER COLUMN: OPEN STAGE FOR 3D AMR ROBOT (lg: col-span-3) ════════ */}
-          {/* The continuous 3D robot sits cleanly in this open corridor with zero overlap */}
+          {/* ════════ CENTER COLUMN: OPEN STAGE FOR 3D AMR ROBOT (lg: col-span-1 xl:col-span-2) ════════ */}
+          {/* The continuous 3D robot sits cleanly in this open corridor */}
           <div
-            className="hidden lg:flex lg:col-span-3 items-center justify-center pointer-events-none relative z-10 min-h-[420px] transition-all duration-400"
+            className="hidden lg:col-span-1 xl:col-span-2 xl:flex items-center justify-center pointer-events-none relative z-10 transition-all duration-400"
             style={{
               filter: isPanelHovered ? "blur(6px)" : "none",
               opacity: 1,
               transition: "filter 400ms ease",
             }}
           >
-            <div id="projects-robot-dock" className="h-10 w-10 opacity-0 pointer-events-none" aria-hidden="true" />
+            <div id="projects-robot-dock" className="h-4 w-4 opacity-0 pointer-events-none" aria-hidden="true" />
           </div>
 
-          {/* ════════ RIGHT COLUMN: CYBERPUNK HUD FEATURED PROJECTS FRAME (lg: col-span-5) ════════ */}
+          {/* ════════ RIGHT COLUMN: CYBERPUNK HUD FEATURED PROJECTS FRAME (lg: col-span-7 xl:col-span-6) ════════ */}
           <div
-            className="lg:col-span-5 flex flex-col items-center lg:items-end transition-all duration-300 ease-out relative z-20 w-full"
+            className="lg:col-span-7 xl:col-span-6 flex flex-col items-center lg:items-end transition-all duration-300 ease-out relative z-30 w-full"
             style={{
               opacity: 0.15 + 0.85 * s,
               transform: prefersReducedMotion || !isDesktop ? "none" : `translateX(${36 * (1 - s)}px)`,
@@ -543,7 +543,7 @@ export default function FeaturedProjectsSection({
             {/* Resting slot wrapper maintaining natural layout in right column */}
             <div
               ref={slotRef}
-              className="w-full max-w-[500px] relative"
+              className="w-full max-w-[560px] min-h-[500px] relative"
               onMouseEnter={handleActiveEnter}
               onMouseLeave={handleActiveLeave}
             >
@@ -783,17 +783,17 @@ export default function FeaturedProjectsSection({
                             ┘
                           </span>
 
-                          {/* ─── Thumbnail Image Container with Cyan Scanning Line (object-contain so all robots fit 100% uncropped) ─── */}
-                          <div className="relative aspect-[16/11] w-full overflow-hidden rounded-[2px] bg-[#020509] border border-cyan-500/15">
+                          {/* ─── Thumbnail Image Container with Cyan Scanning Line ─── */}
+                          <div className="relative aspect-[2.15/1] w-full overflow-hidden rounded-[1px] bg-black/80">
                             <Image
                               src={item.image}
                               alt={item.title}
                               fill
                               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
-                              className="object-contain p-1.5 transition-transform duration-500 group-hover:scale-[1.04]"
+                              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                             />
                             {/* Subtle Vignette Overlay */}
-                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#04090d]/60 via-transparent to-transparent" />
+                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#04090d] via-transparent to-transparent opacity-60" />
 
                             {/* Thin Cyan Scanning Line across image as shutters open */}
                             <div
@@ -828,22 +828,22 @@ export default function FeaturedProjectsSection({
                             }}
                           >
                             {/* Project Title */}
-                            <h4 className="font-mono text-[10.5px] sm:text-[11px] font-bold uppercase tracking-wider text-white transition-colors group-hover:text-cyan-200 leading-snug line-clamp-1">
+                            <h4 className="font-mono text-[10px] sm:text-[10.5px] font-bold uppercase tracking-wider text-white transition-colors group-hover:text-cyan-200 leading-snug line-clamp-1">
                               {item.title}
                             </h4>
 
                             {/* Tech Stack Tags */}
-                            <p className="mt-1 font-mono text-[9px] sm:text-[9.5px] uppercase tracking-wider text-[#6189B0] line-clamp-1">
+                            <p className="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-[#6189B0] line-clamp-1">
                               {item.tags}
                             </p>
 
-                            {/* VIEW PROJECT -> Action Link (padded so letter descenders never clip) */}
-                            <div className="mt-2.5 pt-0.5">
+                            {/* VIEW PROJECT -> Action Link */}
+                            <div className="mt-2">
                               <a
                                 href={item.link}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-cyan-400 py-0.5 transition-colors group-hover:text-cyan-300"
+                                className="inline-flex items-center gap-1.5 font-mono text-[9px] font-bold uppercase tracking-wider text-cyan-400 transition-colors group-hover:text-cyan-300"
                               >
                                 <span>VIEW PROJECT</span>
                                 <span className="transition-transform duration-300 group-hover:translate-x-1">
