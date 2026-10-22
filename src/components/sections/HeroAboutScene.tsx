@@ -43,12 +43,11 @@ export default function HeroAboutScene({ hero, about, projects }: HeroAboutScene
           const t = Math.max(0, Math.min(1, (windowHeight - projectsTop) / (windowHeight * 0.65)));
           p = 1.0 + t;
         } else {
-          // Arrived inside Featured Projects: firmly locked at p = 2.0 so robot remains stationary
+          // Arrived inside Featured Projects
           p = 2.0;
         }
 
-        // When scrolling past projects section, scroll the robot canvas up 1:1 with the projects section
-        // so the robot stays firmly anchored inside the projects section and exits cleanly with it
+        // When scrolling past projects section, scroll the robot canvas up 1:1
         if (projectsBottom < windowHeight) {
           setCanvasTranslateY(projectsBottom - windowHeight);
         } else {
@@ -82,12 +81,12 @@ export default function HeroAboutScene({ hero, about, projects }: HeroAboutScene
 
   return (
     <div ref={containerRef} className="relative w-full max-w-full overflow-x-clip">
-      {/* ─── Continuous 3D Robot Canvas (persists across Hero, About, and Featured Projects) ─── */}
+      {/* ─── Continuous 3D Robot Canvas (persists across Hero and About, fades out cleanly before Featured Projects) ─── */}
       <div
         id="robot-canvas-container"
-        className="pointer-events-none fixed inset-0 z-[2] h-screen w-full max-w-full overflow-hidden transition-opacity duration-300"
+        className="pointer-events-none fixed inset-0 z-[2] h-screen w-full max-w-full overflow-hidden transition-opacity duration-500"
         style={{
-          opacity: isSceneVisible ? 1 : 0,
+          opacity: isSceneVisible && scrollProgress < 1.15 ? 1 : 0,
           transform: `translate3d(0, ${canvasTranslateY}px, 0)`,
           willChange: "transform",
         }}
