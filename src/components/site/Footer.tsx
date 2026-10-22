@@ -110,7 +110,7 @@ export default function Footer() {
 
           {/* Email */}
           <a
-            href="mailto:contact@reddixrobotics.com"
+            href="mailto:reddixrobotics@gmail.com"
             aria-label="Email Reddix Robotics"
             title="Email"
             className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-zinc-800 bg-zinc-950/90 text-zinc-300 transition-all duration-300 hover:border-cyan-400 hover:text-cyan-400 hover:bg-cyan-950/20 hover:shadow-[0_0_15px_rgba(0,229,255,0.35)]"

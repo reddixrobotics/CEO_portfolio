@@ -35,7 +35,7 @@ export default function Navbar() {
     }
 
     if (lenis) {
-      const isFullscreenSection = id === "about" || id === "projects" || id === "achievements";
+      const isFullscreenSection = id === "about" || id === "projects" || id === "achievements" || id === "contact";
       lenis.scrollTo(el, {
         offset: isFullscreenSection ? 0 : -60,
         duration: 1.1,
